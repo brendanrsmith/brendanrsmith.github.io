@@ -65,7 +65,7 @@ export default function Home() {
                     img={"/images/ff/hero-long.png"}
                     title={"FerryFriend 4.0"}
                     subTitle={
-                      "A ground-up rebuild of the FerryFriend app for React Native"
+                      "A ground-up rebuild of FerryFriend using React Native"
                     }
                   />
                 </Col>
