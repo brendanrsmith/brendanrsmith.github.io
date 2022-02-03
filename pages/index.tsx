@@ -6,6 +6,9 @@ import PortfolioCard from "../components/portfolioCard";
 
 const name = "Brendan Smith";
 export const siteTitle = "Brendan Smith";
+export const customLoader = ({ src }: { src: string }): string => {
+  return src;
+}
 
 export default function Home() {
   return (
@@ -15,6 +18,7 @@ export default function Home() {
           <Col lg={4} xl={3} className={utilStyles.homeCard}>
             <Image
               priority
+              loader={customLoader}
               src="/images/profile.jpg"
               className={utilStyles.borderCircle}
               height={180}

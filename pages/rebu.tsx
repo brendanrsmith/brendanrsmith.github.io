@@ -1,6 +1,7 @@
 import Image from "next/image";
 import utilStyles from "../styles/utils.module.css";
 import Post from "../components/post";
+import { customLoader } from "./index";
 
 export default function Rebu() {
   return (
@@ -14,7 +15,8 @@ export default function Rebu() {
       </p>
       <div style={{ margin: "1rem" }}>
         <Image
-          src={"/images/rebu/uml.png"}
+          loader={customLoader}
+          src={"/imges/rebu/rebu-uml.png"}
           height={781}
           width={1920}
           alt="Rebu uml"
@@ -26,6 +28,7 @@ export default function Rebu() {
       </p>
       <div style={{ margin: "1rem" }}>
         <Image
+          loader={customLoader}
           src={"/images/rebu/rebu-wireframe.png"}
           height={1642}
           width={1868}

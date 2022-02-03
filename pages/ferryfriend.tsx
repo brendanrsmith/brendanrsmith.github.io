@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Col, Row } from "react-bootstrap";
+import { customLoader } from './index';
 import Post from "../components/post";
 import utilStyles from "../styles/utils.module.css";
 
@@ -30,6 +31,7 @@ export default function FerryFriend() {
         <Row className="justify-content-center">
           <div style={{ margin: "1rem", maxWidth: "40rem" }}>
             <Image
+              loader={customLoader}
               src={"/images/ff/hero-long.png"}
               height={586}
               width={1024}
@@ -64,6 +66,7 @@ export default function FerryFriend() {
           <Col>
             <div style={{ margin: "1rem" }}>
               <Image
+                loader={customLoader}
                 src={"/images/ff/ff-old-menu.png"}
                 height={375}
                 width={750}
@@ -79,6 +82,7 @@ export default function FerryFriend() {
           <Col>
             <div style={{ margin: "1rem" }}>
               <Image
+                loader={customLoader}
                 src={"/images/ff/ff-menu.png"}
                 height={375}
                 width={750}
@@ -95,6 +99,7 @@ export default function FerryFriend() {
           <Col>
             <div style={{ margin: "1rem" }}>
               <Image
+                loader={customLoader}
                 src={"/images/ff/ff-tab.png"}
                 height={375}
                 width={750}
@@ -118,6 +123,7 @@ export default function FerryFriend() {
           <Col>
             <div style={{ margin: "1rem" }}>
               <Image
+                loader={customLoader}
                 src={"/images/ff/ff-camera.png"}
                 height={1008}
                 width={750}
@@ -133,6 +139,7 @@ export default function FerryFriend() {
           <Col>
             <div style={{ margin: "1rem" }}>
               <Image
+                loader={customLoader}
                 src={"/images/ff/ff-vessel.png"}
                 height={1008}
                 width={750}
@@ -157,6 +164,7 @@ export default function FerryFriend() {
         <Row className="justify-content-center">
           <div style={{ margin: "1rem", maxWidth: "22rem" }}>
             <Image
+              loader={customLoader}
               src={"/images/ff/ff-dark.jpeg"}
               height={1334}
               width={750}
@@ -179,6 +187,7 @@ export default function FerryFriend() {
         <Row className="justify-content-center">
           <div style={{ margin: "1rem", maxWidth: "40rem" }}>
             <Image
+              loader={customLoader}
               src={"/images/ff/ff-favorites.png"}
               height={816}
               width={1080}
@@ -204,6 +213,7 @@ export default function FerryFriend() {
           <Col>
             <div style={{ margin: "1rem", maxWidth: "22rem" }}>
               <Image
+                loader={customLoader}
                 src={"/images/ff/ff-old-ticket.jpeg"}
                 height={1334}
                 width={750}
@@ -218,6 +228,7 @@ export default function FerryFriend() {
           <Col>
             <div style={{ margin: "1rem", maxWidth: "22rem" }}>
               <Image
+                loader={customLoader}
                 src={"/images/ff/ff-ticket.jpeg"}
                 height={1334}
                 width={750}
@@ -246,6 +257,7 @@ export default function FerryFriend() {
         <Row className="justify-content-center">
           <div style={{ margin: "1rem", maxWidth: "40rem" }}>
             <Image
+              loader={customLoader}
               src={"/images/ff/ff-web-tix.png"}
               height={1974}
               width={1376}

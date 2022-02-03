@@ -1,6 +1,7 @@
 import Post from "../components/post";
 import Image from "next/image";
 import utilStyles from "../styles/utils.module.css";
+import { customLoader } from "./index";
 
 export default function Demos() {
   return (
@@ -31,6 +32,7 @@ export default function Demos() {
         </p>
         <div style={{ margin: "1rem", maxWidth: "50rem" }}>
           <Image
+            loader={customLoader}
             src={"/images/demos/resty-square.png"}
             height={1280}
             width={1280}
@@ -53,6 +55,7 @@ export default function Demos() {
         </p>
         <div style={{ margin: "1rem", maxWidth: "50rem" }}>
           <Image
+            loader={customLoader}
             src={"/images/demos/todo-square.png"}
             height={1280}
             width={1280}
@@ -78,6 +81,7 @@ export default function Demos() {
         </p>
         <div style={{ margin: "1rem", maxWidth: "50rem" }}>
           <Image
+            loader={customLoader}
             src={"/images/demos/storefront-square.png"}
             height={1280}
             width={1280}
