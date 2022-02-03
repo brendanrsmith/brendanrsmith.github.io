@@ -16,12 +16,13 @@ export default function Rebu() {
       <div style={{ margin: "1rem" }}>
         <Image
           loader={customLoader}
-          src={"/imges/rebu/rebu-uml.png"}
-          height={781}
-          width={1920}
+          src={"/images/rebu/rebu-db.png"}
+          height={1112}
+          width={2734}
           alt="Rebu uml"
         />
       </div>
+
       <p>
         The backend of Rebu consists of an Express server deployed to Heroku,
         using a MongoDB deployed to Atlas to manage data storage.

@@ -19,6 +19,7 @@ export default function Home() {
             <Image
               priority
               loader={customLoader}
+              unoptimized
               src="/images/profile.jpg"
               className={utilStyles.borderCircle}
               height={180}
