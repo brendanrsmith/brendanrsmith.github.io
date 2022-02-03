@@ -11,21 +11,22 @@ export default function FerryFriend() {
       <section>
         <h2>Introduction</h2>
         <p>
-          <a href="https://www.ferryfriend.com/">FerryFriend</a>, currently in version
-          3.0, is the premier schedule app for the Washington State Ferries,
-          with an average App Store rating of 5.0 and over 1500 reviews.
-          However, the app, originally written in Swift, has to this point only been available for
-          iOS. As usage grew, many Android users expressed their desire to see
-          the app come to that platform.
+          <a href="https://www.ferryfriend.com/">FerryFriend</a>, currently in
+          version 3.0, is the premier schedule app for the Washington State
+          Ferries, with an average App Store rating of 5.0 and over 1500
+          reviews. However, the app, originally written in Swift, has to this
+          point only been available for iOS. As usage grew, many Android users
+          expressed their desire to see the app come to that platform.
         </p>
         <p>
           I had the great opportunity to join the FerryFriend team for the
           development of an Android version of the app, originally conceived to
           be a standalone version alongside the existing iOS app (more on that
           later). Based on my previous experience with React Native, we decided
-          it would be the best choice of framework to build the new version.
-          The goal throughout the project was to emulate the functionality and
-          aesthetic of the existing app, which provided a desing schematic to start from.
+          it would be the best choice of framework to build the new version. The
+          goal throughout the project was to emulate the functionality and
+          aesthetic of the existing app, which provided a desing schematic to
+          start from.
         </p>
         <Row className="justify-content-center">
           <div style={{ margin: "1rem", maxWidth: "40rem" }}>
@@ -40,20 +41,67 @@ export default function FerryFriend() {
         </Row>
 
         <h3>Integrating with the WSF Api</h3>
-        <p>Washington State (WSDOT) provides a number of useful APIs for public access to ferry information. These form the backbone of the data used by FerryFriend to show schedules, alerts, fares, and vessel positions. Additionally, FerryFriend has its own public API which provides sailing delays (using its own prediction model), as well as reservation information and ticket lookups.</p>
-        <p>One of the challenges of the WSDOT API is that there are inconsistencies and proprietary data formats between the different routes. To handle these inconsistencies, we chose to implement a &quot;Provider&quot; model in order to preprocess all incoming WSF data into a common format used throughout the app. This model consists of 5 different WSF Api providers which retrieve data from the APIs using Axios. The results are stored in a local cache to reduce the total number of network requests, as well as aid in offline data storage. </p>
-        <p>A &quot;Data Manager&quot; then consumes these providers, packaging different data sources together for use in individual components, which consume the data via a global context reference. A subscriber model is used to continually check for schedule and delay updates while the app is focused, a particularly important feature for the time-sensitive data they represent. For example, the route schedule screen below consumes data from the WSF schedule provider (scheduled sailing times), WSF Reservation details provider (reservable space availability), WSF terminal info provider (drive-up spaces), and FerryFriend predictions provider (delay predictions).
+        <p>
+          Washington State (WSDOT) provides a number of useful APIs for public
+          access to ferry information. These form the backbone of the data used
+          by FerryFriend to show schedules, alerts, fares, and vessel positions.
+          Additionally, FerryFriend has its own public API which provides
+          sailing delays (using its own prediction model), as well as
+          reservation information and ticket lookups.
         </p>
-        <Row className="justify-content-center">
-          <div style={{ margin: "1rem", maxWidth: "20rem" }}>
-            <Image
-              loader={customLoader}
-              src={"/images/ff/ff-schedule.jpeg"}
-              height={1334}
-              width={750}
-              alt="FerryFriend 4.0"
-            />
-          </div>
+        <p>
+          One of the challenges of the WSDOT API is that there are
+          inconsistencies and proprietary data formats between the different
+          routes. To handle these inconsistencies, we chose to implement a
+          &quot;Provider&quot; model in order to preprocess all incoming WSF
+          data into a common format used throughout the app. This model consists
+          of 5 different WSF Api providers which retrieve data from the APIs
+          using Axios. The results are stored in a local cache to reduce the
+          total number of network requests, as well as aid in offline data
+          storage.
+        </p>
+        <p>
+          A &quot;Data Manager&quot; then consumes these providers, packaging
+          different data sources together for use in individual components,
+          which consume the data via a global context reference. A subscriber
+          model is used to continually check for schedule and delay updates
+          while the app is focused, a particularly important feature for the
+          time-sensitive data they represent. For example, the route schedule
+          screen below consumes data from the WSF schedule provider (scheduled
+          sailing times), WSF Reservation details provider (reservable space
+          availability), WSF terminal info provider (drive-up spaces),
+          FerryFriend predictions provider (delay predictions).
+        </p>
+        <Row className="align-items-start" xs={1} md={2}>
+          <Col>
+            <div style={{ margin: "1rem", maxWidth: "20rem" }}>
+              <Image
+                loader={customLoader}
+                src={"/images/ff/ff-schedule.jpeg"}
+                height={1334}
+                width={750}
+                alt="Schedule screen"
+              />
+              <p className={utilStyles.caption}>
+                The schedule screen shows information for a single route on a
+                single day...
+              </p>
+            </div>
+          </Col>
+          <Col>
+            <div style={{ margin: "1rem", maxWidth: "20rem" }}>
+              <Image
+                loader={customLoader}
+                src={"/images/ff/schedule-context.png"}
+                height={1334}
+                width={750}
+                alt="Schedule screen data sources"
+              />
+              <p className={utilStyles.caption}>
+                ...which consists of data derived from multiple sources
+              </p>
+            </div>
+          </Col>
         </Row>
       </section>
 
@@ -63,18 +111,19 @@ export default function FerryFriend() {
           As the main functionality of the app began to come together, we
           gradually realized that the increase in maintainability, and ability
           of one code-base to support two separate native versions of the app
-          would ultimately make the React Native version of the app a logical choice to
-          become the new primary codebase for FerryFriend, necessitating a new
-          major version of the iOS app as well. With this in mind, we began to
-          implement several completely new features alongside the existing
-          features from FerryFriend 3.0.
+          would ultimately make the React Native version of the app a logical
+          choice to become the new primary codebase for FerryFriend,
+          necessitating a new major version of the iOS app as well. With this in
+          mind, we began to implement several completely new features alongside
+          the existing features from FerryFriend 3.0.
         </p>
 
         <h3>Improvements in user interface design</h3>
         <p>
           One of the benefits of having an existing user base was the
           availability of plenty of user feedback on existing designs. Some of
-          this feedback led to redesigns of user interaction elements. First up was the tab navigation interface:
+          this feedback led to redesigns of user interaction elements. First up
+          was the tab navigation interface:
         </p>
         <Row className="align-items-start" xs={1} md={2}>
           <Col>
@@ -172,10 +221,11 @@ export default function FerryFriend() {
 
         <h4>Dark mode</h4>
         <p>
-          In response to another user request, we spent a good amount of time implementing a
-          theming engine and thinking carefully about how to implement a dark
-          mode well. Users are able to toggle this mode manually, or follow the
-          system settings. I am quite happy with how this turned out.
+          In response to another user request, we spent a good amount of time
+          implementing a theming engine and thinking carefully about how to
+          implement a dark mode well. Users are able to toggle this mode
+          manually, or follow the system settings. I am quite happy with how
+          this turned out.
         </p>
 
         <Row className="justify-content-center">
@@ -197,8 +247,9 @@ export default function FerryFriend() {
         <p>
           Favorite routes are a key feature for regular ferry users, and we
           wanted to find a way to show schedule prediction info for favorite
-          routes directly on the home screen. Using the colors from route predictions to indicate severity of delay, we added badges to the existing favorite route component for a simple but effective
-          solution.
+          routes directly on the home screen. Using the colors from route
+          predictions to indicate severity of delay, we added badges to the
+          existing favorite route component for a simple but effective solution.
         </p>
 
         <Row className="justify-content-center">
@@ -266,7 +317,11 @@ export default function FerryFriend() {
           based visualization of the same ticket, allowing anyone to utilize a
           shared FerryFriend ticket, even if they don&apos;t have the app
           installed on their phone.{" "}
-          <a target={"_blank"} href="https://www.ferryfriend.com/share_ticket/?barcode=5761680130777154343691&type=An-FH%20Adult%20Passenger&expiryDate=February%207%2C%202020&remainingUses=0&lastLookup=2022-02-03T02%3A10%3A31.435Z&plu=761531221AWOPT&description=An-FH%20Adult%20Passenger&price=%2414.00&status=Invalid&itemName=Adult%20Psgr%20%28T%29&name=My%20ticket%20" rel="noreferrer">
+          <a
+            target={"_blank"}
+            href="https://www.ferryfriend.com/share_ticket/?barcode=5761680130777154343691&type=An-FH%20Adult%20Passenger&expiryDate=February%207%2C%202020&remainingUses=0&lastLookup=2022-02-03T02%3A10%3A31.435Z&plu=761531221AWOPT&description=An-FH%20Adult%20Passenger&price=%2414.00&status=Invalid&itemName=Adult%20Psgr%20%28T%29&name=My%20ticket%20"
+            rel="noreferrer"
+          >
             See for yourself here
           </a>
           .
