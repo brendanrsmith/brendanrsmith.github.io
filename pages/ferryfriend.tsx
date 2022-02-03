@@ -7,9 +7,9 @@ import utilStyles from "../styles/utils.module.css";
 export default function FerryFriend() {
   return (
     <Post title={"FerryFriend 4.0"}>
-      <p className={utilStyles.caption}>February 2, 2022</p>
+      <p className={utilStyles.caption}>February 3, 2022</p>
       <section>
-        <h4>Introduction</h4>
+        <h2>Introduction</h2>
         <p>
           <a href="https://www.ferryfriend.com/">FerryFriend</a>, currently in version
           3.0, is the premier schedule app for the Washington State Ferries,
@@ -38,10 +38,27 @@ export default function FerryFriend() {
             />
           </div>
         </Row>
+
+        <h3>Integrating with the WSF Api</h3>
+        <p>Washington State (WSDOT) provides a number of useful APIs for public access to ferry information. These form the backbone of the data used by FerryFriend to show schedules, alerts, fares, and vessel positions. Additionally, FerryFriend has its own public API which provides sailing delays (using its own prediction model), as well as reservation information and ticket lookups.</p>
+        <p>One of the challenges of the WSDOT API is that there are inconsistencies and proprietary data formats between the different routes. To handle these inconsistencies, we chose to implement a &quot;Provider&quot; model in order to preprocess all incoming WSF data into a common format used throughout the app. This model consists of 5 different WSF Api providers which retrieve data from the APIs using Axios. The results are stored in a local cache to reduce the total number of network requests, as well as aid in offline data storage. </p>
+        <p>A &quot;Data Manager&quot; then consumes these providers, packaging different data sources together for use in individual components, which consume the data via a global context reference. A subscriber model is used to continually check for schedule and delay updates while the app is focused, a particularly important feature for the time-sensitive data they represent. For example, the route schedule screen below consumes data from the WSF schedule provider (scheduled sailing times), WSF Reservation details provider (reservable space availability), WSF terminal info provider (drive-up spaces), and FerryFriend predictions provider (delay predictions).
+        </p>
+        <Row className="justify-content-center">
+          <div style={{ margin: "1rem", maxWidth: "20rem" }}>
+            <Image
+              loader={customLoader}
+              src={"/images/ff/ff-schedule.jpeg"}
+              height={1334}
+              width={750}
+              alt="FerryFriend 4.0"
+            />
+          </div>
+        </Row>
       </section>
 
       <section>
-        <h4>FerryFriend Native becomes FerryFriend 4.0</h4>
+        <h2>FerryFriend Native becomes FerryFriend 4.0</h2>
         <p>
           As the main functionality of the app began to come together, we
           gradually realized that the increase in maintainability, and ability
@@ -52,10 +69,8 @@ export default function FerryFriend() {
           implement several completely new features alongside the existing
           features from FerryFriend 3.0.
         </p>
-      </section>
 
-      <section>
-        <h4>Improvements in user interface design</h4>
+        <h3>Improvements in user interface design</h3>
         <p>
           One of the benefits of having an existing user base was the
           availability of plenty of user feedback on existing designs. Some of
@@ -155,6 +170,7 @@ export default function FerryFriend() {
           </Col>
         </Row>
 
+        <h4>Dark mode</h4>
         <p>
           In response to another user request, we spent a good amount of time implementing a
           theming engine and thinking carefully about how to implement a dark
@@ -190,8 +206,8 @@ export default function FerryFriend() {
             <Image
               loader={customLoader}
               src={"/images/ff/ff-favorites.png"}
-              height={816}
-              width={1080}
+              height={750}
+              width={750}
               alt="favorites badge"
             />
             <p className={utilStyles.caption}></p>
@@ -273,7 +289,7 @@ export default function FerryFriend() {
       </section>
 
       <section>
-        <h4>Testing</h4>
+        <h2>Testing</h2>
         <p>
           As of this writing, FerryFriend 4.0 for Android is in public beta (
           <a href="https://play.google.com/store/apps/details?id=com.truecourse.FerryFriend">

@@ -21,9 +21,9 @@ export default function Post({
             <Link href="/" as={`${process.env.BACKEND_URL}/`}>
               ← Home
             </Link>
-            <h2 style={{ paddingBottom: "2rem", paddingTop: "3rem" }}>
+            <h1 style={{ paddingBottom: "2rem", paddingTop: "3rem" }}>
               {title}
-            </h2>
+            </h1>
             {children}
           </Col>
         </Row>
