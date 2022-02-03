@@ -8,7 +8,7 @@ const name = "Brendan Smith";
 export const siteTitle = "Brendan Smith";
 export const customLoader = ({ src }: { src: string }): string => {
   return src;
-}
+};
 
 export default function Home() {
   return (

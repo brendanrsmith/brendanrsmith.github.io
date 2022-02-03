@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Col, Row } from "react-bootstrap";
-import { customLoader } from './index';
+import { customLoader } from "./index";
 import Post from "../components/post";
 import utilStyles from "../styles/utils.module.css";
 
