@@ -17,7 +17,7 @@ export default function PortfolioCard(props: {
               <Card.Title>{props.title}</Card.Title>
               <Card.Subtitle>{props.subTitle}</Card.Subtitle>
             </Card.Body>
-            <Card.Img variant="bottom" src={props.img} />
+            <Card.Img variant="bottom" src={props.img} alt={props.title} />
           </Card>
         </a>
       </Link>

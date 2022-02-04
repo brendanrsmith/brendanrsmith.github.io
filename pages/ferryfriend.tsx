@@ -42,7 +42,7 @@ export default function FerryFriend() {
 
         <h3>Integrating with the WSF Api</h3>
         <p>
-          Washington State (WSDOT) provides a number of useful APIs for public
+          Washington State (WSDOT) provides a number of useful <a href="https://www.wsdot.wa.gov/ferries/api/schedule/documentation/">APIs</a> for public
           access to ferry information. These form the backbone of the data used
           by FerryFriend to show schedules, alerts, fares, and vessel positions.
           Additionally, FerryFriend has its own public API which provides
