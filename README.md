@@ -41,3 +41,4 @@ https://github.com/thierryc/Next-gh-page-example/
 
 https://thierryc.github.io/Next-gh-page-example/
 ```
+**Must delete gh-pages branch on remote before running `npm run deploy` to prevent merge conflicts with build files** 
