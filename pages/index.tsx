@@ -12,7 +12,7 @@ export const customLoader = ({ src }: { src: string }): string => {
 export default function Home() {
   return (
     <Layout>
-      <div className={utilStyles.wrapper}>
+      <div className="flex flex-col">
         <div className="align-items-start">
           <div className={utilStyles.homeCard}>
             <Image
@@ -25,7 +25,9 @@ export default function Home() {
               width={180}
               alt={name}
             />
-            <h1 className="text-2xl" style={{ marginTop: "0.5rem" }}>Brendan Smith</h1>
+            <h1 className="text-2xl" style={{ marginTop: "0.5rem" }}>
+              Brendan Smith
+            </h1>
             <div className={utilStyles.bioText}>
               <section>
                 <p style={{ paddingTop: "0.5rem" }}>
@@ -52,7 +54,7 @@ export default function Home() {
               </section>
             </div>
           </div>
-          <div id="Content" >
+          <div id="Content">
             <div>
               <div>
                 <h4 className={"mt-4"}>Portfolio</h4>

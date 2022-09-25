@@ -41,11 +41,14 @@ export default function FerryFriend() {
 
         <h3>Integrating with the WSF Api</h3>
         <p>
-          Washington State (WSDOT) provides a number of useful <a href="https://www.wsdot.wa.gov/ferries/api/schedule/documentation/">APIs</a> for public
-          access to ferry information. These form the backbone of the data used
-          by FerryFriend to show schedules, alerts, fares, and vessel positions.
-          Additionally, FerryFriend has its own public API which provides
-          sailing delays (using its own prediction model), as well as
+          Washington State (WSDOT) provides a number of useful{" "}
+          <a href="https://www.wsdot.wa.gov/ferries/api/schedule/documentation/">
+            APIs
+          </a>{" "}
+          for public access to ferry information. These form the backbone of the
+          data used by FerryFriend to show schedules, alerts, fares, and vessel
+          positions. Additionally, FerryFriend has its own public API which
+          provides sailing delays (using its own prediction model), as well as
           reservation information and ticket lookups.
         </p>
         <p>
@@ -71,7 +74,7 @@ export default function FerryFriend() {
           availability), WSF terminal info provider (drive-up spaces),
           FerryFriend predictions provider (delay predictions).
         </p>
-        <div className="align-items-start" >
+        <div className="align-items-start">
           <div>
             <div style={{ margin: "1rem", maxWidth: "20rem" }}>
               <Image
@@ -124,7 +127,7 @@ export default function FerryFriend() {
           this feedback led to redesigns of user interaction elements. First up
           was the tab navigation interface:
         </p>
-        <div className="align-items-start" >
+        <div className="align-items-start">
           <div>
             <div style={{ margin: "1rem" }}>
               <p>Before</p>
@@ -183,7 +186,7 @@ export default function FerryFriend() {
           usability of these screens without drastically changing their layout.
         </p>
 
-        <div className="align-items-start" >
+        <div className="align-items-start">
           <div>
             <div style={{ margin: "1rem" }}>
               <Image
@@ -276,7 +279,7 @@ export default function FerryFriend() {
           carry a physical copy of every ticket they may own.
         </p>
 
-        <div className="justify-content-center" >
+        <div className="justify-content-center">
           <div>
             <div style={{ margin: "1rem", maxWidth: "22rem" }}>
               <Image
