@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Col, Row } from "react-bootstrap";
 import { customLoader } from "./index";
 import Post from "../components/post";
 import utilStyles from "../styles/utils.module.css";
@@ -28,7 +27,7 @@ export default function FerryFriend() {
           aesthetic of the existing app, which provided a desing schematic to
           start from.
         </p>
-        <Row className="justify-content-center">
+        <div className="justify-content-center">
           <div style={{ margin: "1rem", maxWidth: "40rem" }}>
             <Image
               loader={customLoader}
@@ -38,7 +37,7 @@ export default function FerryFriend() {
               alt="FerryFriend 4.0"
             />
           </div>
-        </Row>
+        </div>
 
         <h3>Integrating with the WSF Api</h3>
         <p>
@@ -72,8 +71,8 @@ export default function FerryFriend() {
           availability), WSF terminal info provider (drive-up spaces),
           FerryFriend predictions provider (delay predictions).
         </p>
-        <Row className="align-items-start" xs={1} md={2}>
-          <Col>
+        <div className="align-items-start" >
+          <div>
             <div style={{ margin: "1rem", maxWidth: "20rem" }}>
               <Image
                 loader={customLoader}
@@ -87,8 +86,8 @@ export default function FerryFriend() {
                 single day...
               </p>
             </div>
-          </Col>
-          <Col>
+          </div>
+          <div>
             <div style={{ margin: "1rem", maxWidth: "20rem" }}>
               <Image
                 loader={customLoader}
@@ -101,8 +100,8 @@ export default function FerryFriend() {
                 ...which consists of data derived from multiple sources
               </p>
             </div>
-          </Col>
-        </Row>
+          </div>
+        </div>
       </section>
 
       <section>
@@ -125,8 +124,8 @@ export default function FerryFriend() {
           this feedback led to redesigns of user interaction elements. First up
           was the tab navigation interface:
         </p>
-        <Row className="align-items-start" xs={1} md={2}>
-          <Col>
+        <div className="align-items-start" >
+          <div>
             <div style={{ margin: "1rem" }}>
               <p>Before</p>
               <Image
@@ -141,9 +140,9 @@ export default function FerryFriend() {
                 be confusing and difficult to target.
               </p>
             </div>
-          </Col>
+          </div>
 
-          <Col>
+          <div>
             <div style={{ margin: "1rem" }}>
               <p>After</p>
               <Image
@@ -159,9 +158,9 @@ export default function FerryFriend() {
                 user interaction.{" "}
               </p>
             </div>
-          </Col>
+          </div>
 
-          <Col>
+          <div>
             <div style={{ margin: "1rem" }}>
               <Image
                 loader={customLoader}
@@ -175,8 +174,8 @@ export default function FerryFriend() {
                 screen to the bottom, improving access with one hand.
               </p>
             </div>
-          </Col>
-        </Row>
+          </div>
+        </div>
 
         <p>
           Two of the most popular features on FerryFriend are the ferry line
@@ -184,8 +183,8 @@ export default function FerryFriend() {
           usability of these screens without drastically changing their layout.
         </p>
 
-        <Row className="align-items-start" xs={1} md={2}>
-          <Col>
+        <div className="align-items-start" >
+          <div>
             <div style={{ margin: "1rem" }}>
               <Image
                 loader={customLoader}
@@ -199,9 +198,9 @@ export default function FerryFriend() {
                 viewer and increased the legibility of the map.
               </p>
             </div>
-          </Col>
+          </div>
 
-          <Col>
+          <div>
             <div style={{ margin: "1rem" }}>
               <Image
                 loader={customLoader}
@@ -216,8 +215,8 @@ export default function FerryFriend() {
                 passenger capacity.
               </p>
             </div>
-          </Col>
-        </Row>
+          </div>
+        </div>
 
         <h4>Dark mode</h4>
         <p>
@@ -228,7 +227,7 @@ export default function FerryFriend() {
           this turned out.
         </p>
 
-        <Row className="justify-content-center">
+        <div className="justify-content-center">
           <div style={{ margin: "1rem", maxWidth: "22rem" }}>
             <Image
               loader={customLoader}
@@ -239,7 +238,7 @@ export default function FerryFriend() {
             />
             <p className={utilStyles.caption}>Easy on the eyes</p>
           </div>
-        </Row>
+        </div>
       </section>
 
       <section>
@@ -247,12 +246,12 @@ export default function FerryFriend() {
         <p>
           Favorite routes are a key feature for regular ferry users, and we
           wanted to find a way to show schedule prediction info for favorite
-          routes directly on the home screen. Using the colors from route
+          routes directly on the home screen. Using the divors from route
           predictions to indicate severity of delay, we added badges to the
           existing favorite route component for a simple but effective solution.
         </p>
 
-        <Row className="justify-content-center">
+        <div className="justify-content-center">
           <div style={{ margin: "1rem", maxWidth: "40rem" }}>
             <Image
               loader={customLoader}
@@ -263,7 +262,7 @@ export default function FerryFriend() {
             />
             <p className={utilStyles.caption}></p>
           </div>
-        </Row>
+        </div>
       </section>
 
       <section>
@@ -277,8 +276,8 @@ export default function FerryFriend() {
           carry a physical copy of every ticket they may own.
         </p>
 
-        <Row className="justify-content-center" xs={1} md={2}>
-          <Col>
+        <div className="justify-content-center" >
+          <div>
             <div style={{ margin: "1rem", maxWidth: "22rem" }}>
               <Image
                 loader={customLoader}
@@ -292,8 +291,8 @@ export default function FerryFriend() {
                 was lots of room for improvement here.
               </p>
             </div>
-          </Col>
-          <Col>
+          </div>
+          <div>
             <div style={{ margin: "1rem", maxWidth: "22rem" }}>
               <Image
                 loader={customLoader}
@@ -307,8 +306,8 @@ export default function FerryFriend() {
                 place, and emulates the look of a physical WSF ticket.
               </p>
             </div>
-          </Col>
-        </Row>
+          </div>
+        </div>
 
         <p>
           This stored digital ticket offers an opportunity to easily share
@@ -326,7 +325,7 @@ export default function FerryFriend() {
           </a>
           .
         </p>
-        <Row className="justify-content-center">
+        <div className="justify-content-center">
           <div style={{ margin: "1rem", maxWidth: "40rem" }}>
             <Image
               loader={customLoader}
@@ -340,7 +339,7 @@ export default function FerryFriend() {
               do not have the app installed.
             </p>
           </div>
-        </Row>
+        </div>
       </section>
 
       <section>

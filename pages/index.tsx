@@ -1,6 +1,5 @@
-import Image from "next/image";
+import Image from "next/future/image";
 import utilStyles from "../styles/utils.module.css";
-import { Col, Container, Row } from "react-bootstrap";
 import Layout from "../components/layout";
 import PortfolioCard from "../components/portfolioCard";
 
@@ -13,9 +12,9 @@ export const customLoader = ({ src }: { src: string }): string => {
 export default function Home() {
   return (
     <Layout>
-      <Container fluid="xl" className={utilStyles.wrapper}>
-        <Row className="align-items-start">
-          <Col lg={4} xl={3} className={utilStyles.homeCard}>
+      <div className={utilStyles.wrapper}>
+        <div className="align-items-start">
+          <div className={utilStyles.homeCard}>
             <Image
               priority
               loader={customLoader}
@@ -26,7 +25,7 @@ export default function Home() {
               width={180}
               alt={name}
             />
-            <h1 style={{ marginTop: "0.5rem" }}>Brendan Smith</h1>
+            <h1 className="text-2xl" style={{ marginTop: "0.5rem" }}>Brendan Smith</h1>
             <div className={utilStyles.bioText}>
               <section>
                 <p style={{ paddingTop: "0.5rem" }}>
@@ -52,14 +51,14 @@ export default function Home() {
                 </p>
               </section>
             </div>
-          </Col>
-          <Col id="Content" lg={8} xl={9}>
-            <Container>
-              <Row>
+          </div>
+          <div id="Content" >
+            <div>
+              <div>
                 <h4 className={"mt-4"}>Portfolio</h4>
-              </Row>
-              <Row xs={1}>
-                <Col style={{}}>
+              </div>
+              <div>
+                <div style={{}}>
                   <PortfolioCard
                     url={"/ferryfriend"}
                     img={"/images/ff/hero-long.png"}
@@ -68,9 +67,9 @@ export default function Home() {
                       "A ground-up rebuild of FerryFriend using React Native"
                     }
                   />
-                </Col>
-              </Row>
-              <Row xs={1} md={2}>
+                </div>
+              </div>
+              <div>
                 <PortfolioCard
                   url={"/rebu"}
                   img={"/images/rebu/rebu-square.png"}
@@ -85,11 +84,11 @@ export default function Home() {
                   title={"Demo Projects"}
                   subTitle={"Feature demonstration apps"}
                 />
-              </Row>
-            </Container>
-          </Col>
-        </Row>
-      </Container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </Layout>
   );
 }
