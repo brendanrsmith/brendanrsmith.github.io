@@ -1,6 +1,5 @@
 import Image from "next/future/image";
 import Link from "next/link";
-import utilStyles from "../styles/utils.module.css";
 
 export default function PortfolioCard(props: {
   url: string;
@@ -12,7 +11,7 @@ export default function PortfolioCard(props: {
     <div>
       <Link href={props.url} as={process.env.BACKEND_URL + props.url}>
         <a>
-          <div className={utilStyles.card}>
+          <div className="">
             <div>
               <div>{props.title}</div>
               <div>{props.subTitle}</div>

@@ -37,6 +37,7 @@ export default function Demos() {
             height={1280}
             width={1280}
             alt="FerryFriend home screen"
+            unoptimized
           />
         </div>
       </section>

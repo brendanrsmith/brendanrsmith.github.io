@@ -3,13 +3,14 @@ import React from "react";
 
 export default function Layout({
   children,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   home,
 }: {
   children: React.ReactNode;
   home?: boolean;
 }) {
   return (
-    <div style={{ paddingBottom: "3rem" }}>
+    <div className="pb-3 min-h-screen">
       <Head>
         <title>Brendan Smith</title>
         <meta charSet="utf8" />
@@ -19,7 +20,7 @@ export default function Layout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" type="image/x-icon" href="favicon.ico" />
       </Head>
-      <main>{children}</main>
+      <main className="scroll-smooth">{children}</main>
     </div>
   );
 }
