@@ -1,12 +1,11 @@
 import Post from "../components/post";
 import Image from "next/image";
-import utilStyles from "../styles/utils.module.css";
 import { customLoader } from "./index";
 
 export default function Demos() {
   return (
     <Post title="Demo Projects">
-      <p className={utilStyles.caption}>
+      <p className="">
         <em>Dec 16, 2021</em>
       </p>
       <p>
@@ -17,7 +16,7 @@ export default function Demos() {
         Technologies used include: React, Redux, React-Router, MongoDB, Express,
         Heroku, Netlify, Github Pages, and Axios.{" "}
       </p>
-      <section className={utilStyles.sectionPadding}>
+      <section className="">
         <h4>RESTy</h4>
         <a></a>
         <p>
@@ -42,7 +41,7 @@ export default function Demos() {
         </div>
       </section>
 
-      <section className={utilStyles.sectionPadding}>
+      <section className="">
         <h4>Todo</h4>
         <p>
           A React web application using context for state management, Axios for
@@ -65,7 +64,7 @@ export default function Demos() {
         </div>
       </section>
 
-      <section className={utilStyles.sectionPadding}>
+      <section className="">
         <h4>Storefront</h4>
         <p>
           A React web application using Redux for state management, React-router

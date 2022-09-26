@@ -1,12 +1,11 @@
 import Image from "next/image";
 import { customLoader } from "./index";
 import Post from "../components/post";
-import utilStyles from "../styles/utils.module.css";
 
 export default function FerryFriend() {
   return (
     <Post title={"FerryFriend 4.0"}>
-      <p className={utilStyles.caption}>February 3, 2022</p>
+      <p className="">February 3, 2022</p>
       <section>
         <h2>Introduction</h2>
         <p>
@@ -84,7 +83,7 @@ export default function FerryFriend() {
                 width={750}
                 alt="Schedule screen"
               />
-              <p className={utilStyles.caption}>
+              <p className="">
                 The schedule screen shows information for a single route on a
                 single day...
               </p>
@@ -99,7 +98,7 @@ export default function FerryFriend() {
                 width={750}
                 alt="Schedule screen data sources"
               />
-              <p className={utilStyles.caption}>
+              <p className="">
                 ...which consists of data derived from multiple sources
               </p>
             </div>
@@ -138,7 +137,7 @@ export default function FerryFriend() {
                 width={750}
                 alt="old menu"
               />
-              <p className={utilStyles.caption}>
+              <p className="">
                 The original menu was functional, but dense user controls could
                 be confusing and difficult to target.
               </p>
@@ -155,7 +154,7 @@ export default function FerryFriend() {
                 width={750}
                 alt="vessel menu"
               />
-              <p className={utilStyles.caption}>
+              <p className="">
                 Using space freed up by the tab navigator, we were able to
                 redesign the route top bar to increase legibility and simplify
                 user interaction.{" "}
@@ -172,7 +171,7 @@ export default function FerryFriend() {
                 width={750}
                 alt="tab navigator"
               />
-              <p className={utilStyles.caption}>
+              <p className="">
                 The tab navigator was moved from the upper margin of the route
                 screen to the bottom, improving access with one hand.
               </p>
@@ -196,7 +195,7 @@ export default function FerryFriend() {
                 width={750}
                 alt="camera screen"
               />
-              <p className={utilStyles.caption}>
+              <p className="">
                 On the cameras screen, we improved touch targets on the carousel
                 viewer and increased the legibility of the map.
               </p>
@@ -212,7 +211,7 @@ export default function FerryFriend() {
                 width={750}
                 alt="vessel screen"
               />
-              <p className={utilStyles.caption}>
+              <p className="">
                 On the vessel view screen, we added additional vessel details to
                 the vessel modal, with important details like vehicle and
                 passenger capacity.
@@ -239,7 +238,7 @@ export default function FerryFriend() {
               width={750}
               alt="dark mode"
             />
-            <p className={utilStyles.caption}>Easy on the eyes</p>
+            <p className="">Easy on the eyes</p>
           </div>
         </div>
       </section>
@@ -263,7 +262,7 @@ export default function FerryFriend() {
               width={750}
               alt="favorites badge"
             />
-            <p className={utilStyles.caption}></p>
+            <p className=""></p>
           </div>
         </div>
       </section>
@@ -289,7 +288,7 @@ export default function FerryFriend() {
                 width={750}
                 alt="old ticket menu"
               />
-              <p className={utilStyles.caption}>
+              <p className="">
                 The FerryFriend 3.0 ticket screen. Although functional, there
                 was lots of room for improvement here.
               </p>
@@ -304,7 +303,7 @@ export default function FerryFriend() {
                 width={750}
                 alt="new ticket screen"
               />
-              <p className={utilStyles.caption}>
+              <p className="">
                 The new ticket screen shows all relevant information in one
                 place, and emulates the look of a physical WSF ticket.
               </p>
@@ -337,7 +336,7 @@ export default function FerryFriend() {
               width={1376}
               alt="web ticket screen"
             />
-            <p className={utilStyles.caption}>
+            <p className="">
               A web-based display of tickets allows ticket sharing to users who
               do not have the app installed.
             </p>

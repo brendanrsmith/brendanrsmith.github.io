@@ -17,7 +17,7 @@ export default function Post({
         <div>
           <div></div>
           <div>
-            <Link href="/" as={`${process.env.BACKEND_URL}/`}>
+            <Link href="/" as={`${process.env.BACKEND_URL}/#portfolio`}>
               ← Home
             </Link>
             <h1>{title}</h1>

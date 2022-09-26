@@ -11,7 +11,7 @@ export const customLoader = ({ src }: { src: string }): string => {
 export default function Home() {
   return (
     <Layout>
-      <div className="container mx-auto ">
+      <div className=" mx-auto ">
         <div className="mx-auto flex flex-col items-center justify-center h-screen w-fit">
           <Image
             priority
@@ -59,33 +59,37 @@ export default function Home() {
             </section>
           </div>
         </div>
-      </div>
-      <div className="-mt-8 text-center">
-        <a href="#portfolio">Projects ⤵</a>
-      </div>
-      <div id="portfolio" className="">
-        <div className={"mt-4"}>
-          <h4>Portfolio</h4>
-        </div>
-        <div>
-          <PortfolioCard
-            url={"/ferryfriend"}
-            img={"/images/ff/hero-long.png"}
-            title={"FerryFriend 4.0"}
-            subTitle={"A ground-up rebuild of FerryFriend using React Native"}
-          />
-          <PortfolioCard
-            url={"/rebu"}
-            img={"/images/rebu/rebu-square.png"}
-            title={"Rebu Native"}
-            subTitle={"A React Native ridesharing app demo completed in 4 days"}
-          />
-          <PortfolioCard
-            url={"/demos"}
-            img={"/images/demos/todo-square.png"}
-            title={"Demo Projects"}
-            subTitle={"Feature demonstration apps"}
-          />
+        <div className="">
+          <div className="-mt-8 text-center">
+            <a href="#portfolio">Projects ⤵</a>
+          </div>
+          <div
+            id="portfolio"
+            className="container mx-auto mt-8 flex flex-wrap gap-6"
+          >
+            <PortfolioCard
+              url={"/ferryfriend"}
+              img={"/images/ff/hero-long.png"}
+              title={"FerryFriend 4.0"}
+              subTitle={
+                "A ground-up rebuild of the FerryFriend app using React Native"
+              }
+            />
+            <PortfolioCard
+              url={"/rebu"}
+              img={"/images/rebu/rebu-square.png"}
+              title={"Rebu Native"}
+              subTitle={
+                "A React Native ridesharing app demo completed in 4 days"
+              }
+            />
+            <PortfolioCard
+              url={"/demos"}
+              img={"/images/demos/todo-square.png"}
+              title={"Demonstration Projects"}
+              subTitle={"Classic feature demonstration apps"}
+            />
+          </div>
         </div>
       </div>
     </Layout>

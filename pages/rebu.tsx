@@ -1,5 +1,4 @@
 import Image from "next/image";
-import utilStyles from "../styles/utils.module.css";
 import Post from "../components/post";
 import { customLoader } from "./index";
 
@@ -35,7 +34,7 @@ export default function Rebu() {
           width={1868}
           alt="Rebu wireframe"
         />
-        <p className={utilStyles.caption}>
+        <p className="">
           Wireframe mockups were completed before development began.
         </p>
       </div>
