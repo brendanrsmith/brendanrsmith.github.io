@@ -32,7 +32,7 @@ export default function Home() {
               <p className="pt-4">
                 Contact me by emailing{" "}
                 <a
-                  className="transition text-indigo-500 dark:text-indigo-300 hover:underline"
+                  className="  text-indigo-500 dark:text-indigo-300 hover:underline decoration-2"
                   href="mailto:me@brendansmith.dev"
                 >
                   me@brendansmith.dev
@@ -42,7 +42,7 @@ export default function Home() {
             <section className="flex justify-around pt-4">
               <p>
                 <a
-                  className="text-indigo-500 dark:text-indigo-300 hover:underline"
+                  className="text-indigo-500 dark:text-indigo-300 hover:underline decoration-2"
                   href="https://github.com/brendanrsmith"
                 >
                   GitHub
@@ -50,7 +50,7 @@ export default function Home() {
               </p>
               <p>
                 <a
-                  className="text-indigo-500 dark:text-indigo-300 hover:underline"
+                  className="text-indigo-500 dark:text-indigo-300 hover:underline decoration-2 "
                   href="https://www.linkedin.com/in/brendanrsmith/"
                 >
                   LinkedIn
@@ -59,14 +59,11 @@ export default function Home() {
             </section>
           </div>
         </div>
-        <div className="">
+        <div className=" mb-10 max-w-4xl m-auto ">
           <div className="-mt-8 text-center">
             <a href="#portfolio">Projects ⤵</a>
           </div>
-          <div
-            id="portfolio"
-            className="container mx-auto mt-8 flex flex-wrap gap-6"
-          >
+          <div id="portfolio" className="m-8 grid grid-cols-1 md:grid-cols-2 ">
             <PortfolioCard
               url={"/ferryfriend"}
               img={"/images/ff/hero-long.png"}
@@ -74,6 +71,7 @@ export default function Home() {
               subTitle={
                 "A ground-up rebuild of the FerryFriend app using React Native"
               }
+              hero
             />
             <PortfolioCard
               url={"/rebu"}
