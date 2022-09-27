@@ -10,7 +10,7 @@ export default function Layout({
   home?: boolean;
 }) {
   return (
-    <div className="pb-3 min-h-screen">
+    <div className="min-h-screen pb-3">
       <Head>
         <title>Brendan Smith</title>
         <meta charSet="utf8" />

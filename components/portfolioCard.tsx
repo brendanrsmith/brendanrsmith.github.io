@@ -12,7 +12,7 @@ export default function PortfolioCard(props: {
     <div
       className={
         (props.hero ? "md:col-span-2" : "col-span-1") +
-        " bg-neutral-100 dark:bg-neutral-800 mb-8 mx-4 h-fit rounded-sm hover:brightness-95 border dark:border-0"
+        " mx-4 mb-8 h-fit rounded-sm border bg-neutral-100 hover:brightness-95 dark:border-0 dark:bg-neutral-800"
       }
     >
       <Link href={props.url} as={process.env.BACKEND_URL + props.url}>

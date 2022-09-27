@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <Layout>
       <div className=" mx-auto ">
-        <div className="mx-auto flex flex-col items-center justify-center h-screen w-fit">
+        <div className="mx-auto flex h-screen w-fit flex-col items-center justify-center">
           <Image
             priority
             loader={customLoader}
@@ -23,8 +23,8 @@ export default function Home() {
             width={180}
             alt={name}
           />
-          <h1 className="text-3xl mt-3">Brendan Smith</h1>
-          <div className="text-lg text-center max-w-xs">
+          <h1 className="mt-3 text-3xl">Brendan Smith</h1>
+          <div className="max-w-xs text-center text-lg">
             <section className="pt-4">
               <p>I am a software developer</p>
               <p>who solves real problems</p>
@@ -32,7 +32,7 @@ export default function Home() {
               <p className="pt-4">
                 Contact me by emailing{" "}
                 <a
-                  className="  text-indigo-500 dark:text-indigo-300 hover:underline decoration-2"
+                  className="  text-indigo-500 decoration-2 hover:underline dark:text-indigo-300"
                   href="mailto:me@brendansmith.dev"
                 >
                   me@brendansmith.dev
@@ -42,7 +42,7 @@ export default function Home() {
             <section className="flex justify-around pt-4">
               <p>
                 <a
-                  className="text-indigo-500 dark:text-indigo-300 hover:underline decoration-2"
+                  className="text-indigo-500 decoration-2 hover:underline dark:text-indigo-300"
                   href="https://github.com/brendanrsmith"
                 >
                   GitHub
@@ -50,7 +50,7 @@ export default function Home() {
               </p>
               <p>
                 <a
-                  className="text-indigo-500 dark:text-indigo-300 hover:underline decoration-2 "
+                  className="text-indigo-500 decoration-2 hover:underline dark:text-indigo-300 "
                   href="https://www.linkedin.com/in/brendanrsmith/"
                 >
                   LinkedIn
@@ -59,7 +59,7 @@ export default function Home() {
             </section>
           </div>
         </div>
-        <div className=" mb-10 max-w-4xl m-auto ">
+        <div className=" m-auto mb-10 max-w-4xl ">
           <div className="-mt-8 text-center">
             <a href="#portfolio">Projects ⤵</a>
           </div>
