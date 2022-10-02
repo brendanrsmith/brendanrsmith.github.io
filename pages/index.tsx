@@ -15,8 +15,7 @@ export default function Home() {
         <div className="mx-auto flex h-screen w-fit flex-col items-center justify-center ">
           <Image
             priority
-            // loader={customLoader}
-            unoptimized
+            loader={customLoader}
             src="/images/profile.jpg"
             className="rounded-full"
             height={180}
