@@ -21,10 +21,8 @@ Edit `next.config.js` and replace `'Next-gh-page-example'` by your project name.
 1. Create repository.
 2. Link it to your github account.
 3. Publish your default branch, e.g. `main`.
+4. Any push to `main` triggers gh-workflow, builds and deploys nextjs site
 
-```bash
-npm run deploy
-```
 
 Test it:
 
