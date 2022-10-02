@@ -85,7 +85,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: https://www.brendansmith.dev
     runs-on: ubuntu-latest
     needs: build
     steps:
