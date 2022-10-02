@@ -1,24 +1,25 @@
 import Post from "../components/post";
 import Image from "next/image";
 import { customLoader } from "./index";
+import Section from "../components/section";
 
 export default function Demos() {
   return (
-    <Post title="Demo Projects">
-      <p className="">
-        <em>Dec 16, 2021</em>
-      </p>
-      <p>
-        Below are a selection of simple feature demonstration applications
-        designed to showcase various technologies and features.
-      </p>
-      <p>
-        Technologies used include: React, Redux, React-Router, MongoDB, Express,
-        Heroku, Netlify, Github Pages, and Axios.{" "}
-      </p>
-      <section className="">
+    <Post title="Demo Projects" date="December 16, 2021">
+      <Section>
+        <p>
+          Below are a selection of simple feature demonstration applications
+          designed to showcase various technologies and features.
+        </p>
+
+        <p>
+          Technologies used include: React, Redux, React-Router, MongoDB,
+          Express, Heroku, Netlify, Github Pages, and Axios.{" "}
+        </p>
+      </Section>
+
+      <Section title="RESTy">
         <h4>RESTy</h4>
-        <a></a>
         <p>
           A React based application which allows users to hit HTTP routes with
           GET, PUT, POST, or DELETE method requests, utilizing React state to
@@ -29,20 +30,19 @@ export default function Demos() {
           or view the
           <a href="https://github.com/brendanrsmith/resty"> Github Repo</a>.
         </p>
-        <div style={{ margin: "1rem", maxWidth: "50rem" }}>
+        <div className="m-4 max-w-xl shadow">
           <Image
             loader={customLoader}
             src={"/images/demos/resty-square.png"}
             height={1280}
             width={1280}
-            alt="FerryFriend home screen"
-            unoptimized
+            alt="RESTy API utility"
+            className="rounded"
           />
         </div>
-      </section>
+      </Section>
 
-      <section className="">
-        <h4>Todo</h4>
+      <Section title="Todo">
         <p>
           A React web application using context for state management, Axios for
           network requests, an Express server, and a MongoDB Database. The api
@@ -53,19 +53,19 @@ export default function Demos() {
           <a href="https://github.com/brendanrsmith/todo"> Github Repo </a>
           (please note the server may take a few seconds to spin up).
         </p>
-        <div style={{ margin: "1rem", maxWidth: "50rem" }}>
+        <div className="m-4 max-w-xl shadow">
           <Image
             loader={customLoader}
             src={"/images/demos/todo-square.png"}
             height={1280}
             width={1280}
-            alt="FerryFriend home screen"
+            alt="Todo app, styled with Material UI"
+            className="rounded"
           />
         </div>
-      </section>
+      </Section>
 
-      <section className="">
-        <h4>Storefront</h4>
+      <Section title="Storefront">
         <p>
           A React web application using Redux for state management, React-router
           for routing, Axios for network requests, deployed on Github Pages. An
@@ -79,16 +79,17 @@ export default function Demos() {
           </a>
           (again, the server may take a few seconds to spin up).
         </p>
-        <div style={{ margin: "1rem", maxWidth: "50rem" }}>
+        <div className="m-4 max-w-xl shadow">
           <Image
             loader={customLoader}
             src={"/images/demos/storefront-square.png"}
-            height={1280}
+            height={1250}
             width={1280}
-            alt="FerryFriend home screen"
+            alt="Ecommerce emulation application"
+            className="rounded"
           />
         </div>
-      </section>
+      </Section>
     </Post>
   );
 }

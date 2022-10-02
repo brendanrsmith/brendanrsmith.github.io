@@ -1,6 +1,9 @@
 @tailwind base;
-html {
-    scroll-behavior: smooth
-}
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    a {
+        @apply text-indigo-500 underline-offset-4 dark:text-indigo-300 hover:underline hover:brightness-90 dark:hover:brightness-110;
+    }
+}

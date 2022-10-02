@@ -12,10 +12,10 @@ export default function Home() {
   return (
     <Layout>
       <div className=" mx-auto ">
-        <div className="mx-auto flex h-screen w-fit flex-col items-center justify-center">
+        <div className="mx-auto flex h-screen w-fit flex-col items-center justify-center ">
           <Image
             priority
-            loader={customLoader}
+            // loader={customLoader}
             unoptimized
             src="/images/profile.jpg"
             className="rounded-full"
@@ -31,10 +31,7 @@ export default function Home() {
               <p>with modern technologies.</p>
               <p className="pt-4">
                 Contact me by emailing{" "}
-                <a
-                  className="  text-indigo-500 decoration-2 hover:underline dark:text-indigo-300"
-                  href="mailto:me@brendansmith.dev"
-                >
+                <a className="decoration-2 " href="mailto:me@brendansmith.dev">
                   me@brendansmith.dev
                 </a>
               </p>
@@ -42,7 +39,7 @@ export default function Home() {
             <section className="flex justify-around pt-4">
               <p>
                 <a
-                  className="text-indigo-500 decoration-2 hover:underline dark:text-indigo-300"
+                  className="decoration-2 "
                   href="https://github.com/brendanrsmith"
                 >
                   GitHub
@@ -50,7 +47,7 @@ export default function Home() {
               </p>
               <p>
                 <a
-                  className="text-indigo-500 decoration-2 hover:underline dark:text-indigo-300 "
+                  className="decoration-2 "
                   href="https://www.linkedin.com/in/brendanrsmith/"
                 >
                   LinkedIn
@@ -59,15 +56,17 @@ export default function Home() {
             </section>
           </div>
         </div>
-        <div className=" m-auto mb-10 max-w-4xl ">
-          <div className="-mt-8 text-center">
-            <a href="#portfolio">Projects ⤵</a>
+        <div id="portfolio" className=" m-auto mb-10 max-w-4xl ">
+          <div className="-mt-8 text-center hover:animate-pulse">
+            <a className="text-inherit hover:no-underline" href="#portfolio">
+              Projects ⤵
+            </a>
           </div>
-          <div id="portfolio" className="m-8 grid grid-cols-1 md:grid-cols-2 ">
+          <div className="m-8 grid grid-cols-1 md:grid-cols-2 ">
             <PortfolioCard
               url={"/ferryfriend"}
               img={"/images/ff/hero-long.png"}
-              title={"FerryFriend 4.0"}
+              title={"FerryFriend 4"}
               subTitle={
                 "A ground-up rebuild of the FerryFriend app using React Native"
               }

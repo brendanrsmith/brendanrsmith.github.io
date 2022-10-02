@@ -1,17 +1,16 @@
 import Image from "next/image";
 import { customLoader } from "./index";
 import Post from "../components/post";
+import Section from "../components/section";
 
 export default function FerryFriend() {
   return (
-    <Post title={"FerryFriend 4.0"}>
-      <p className="">February 3, 2022</p>
-      <section>
-        <h2>Introduction</h2>
-        <p>
+    <Post title={"FerryFriend 4"} date="February 3, 2022">
+      <Section title="Introduction">
+        <p className="mb-4">
           <a href="https://www.ferryfriend.com/">FerryFriend</a>, currently in
           version 3.0, is the premier schedule app for the Washington State
-          Ferries, with an average App Store rating of 5.0 and over 1500
+          Ferries, with an average App Store rating of 5.0 and over 2000
           reviews. However, the app, originally written in Swift, has to this
           point only been available for iOS. As usage grew, many Android users
           expressed their desire to see the app come to that platform.
@@ -26,8 +25,8 @@ export default function FerryFriend() {
           aesthetic of the existing app, which provided a desing schematic to
           start from.
         </p>
-        <div className="justify-content-center">
-          <div style={{ margin: "1rem", maxWidth: "40rem" }}>
+        <div className="flex justify-center ">
+          <div className="max-w-3xl ">
             <Image
               loader={customLoader}
               src={"/images/ff/hero-long.png"}
@@ -38,11 +37,11 @@ export default function FerryFriend() {
           </div>
         </div>
 
-        <h3>Integrating with the WSF Api</h3>
+        <h3 className="text-xl sm:-ml-4 ">Integrating with the WSF API</h3>
         <p>
-          Washington State (WSDOT) provides a number of useful{" "}
+          Washington State (WSDOT) provides a number of{" "}
           <a href="https://www.wsdot.wa.gov/ferries/api/schedule/documentation/">
-            APIs
+            useful APIs
           </a>{" "}
           for public access to ferry information. These form the backbone of the
           data used by FerryFriend to show schedules, alerts, fares, and vessel
@@ -73,41 +72,39 @@ export default function FerryFriend() {
           availability), WSF terminal info provider (drive-up spaces),
           FerryFriend predictions provider (delay predictions).
         </p>
-        <div className="align-items-start">
+
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <div style={{ margin: "1rem", maxWidth: "20rem" }}>
-              <Image
-                loader={customLoader}
-                src={"/images/ff/ff-schedule.jpeg"}
-                height={1334}
-                width={750}
-                alt="Schedule screen"
-              />
-              <p className="">
-                The schedule screen shows information for a single route on a
-                single day...
-              </p>
-            </div>
+            <Image
+              loader={customLoader}
+              src={"/images/ff/ff-schedule.jpeg"}
+              height={1334}
+              width={750}
+              alt="Schedule screen"
+              className="rounded"
+            />
+            <p className="text-sm">
+              The schedule screen shows information for a single route on a
+              single day...
+            </p>
           </div>
           <div>
-            <div style={{ margin: "1rem", maxWidth: "20rem" }}>
-              <Image
-                loader={customLoader}
-                src={"/images/ff/schedule-context.png"}
-                height={1334}
-                width={750}
-                alt="Schedule screen data sources"
-              />
-              <p className="">
-                ...which consists of data derived from multiple sources
-              </p>
-            </div>
+            <Image
+              loader={customLoader}
+              src={"/images/ff/schedule-context.png"}
+              height={1334}
+              width={750}
+              alt="Schedule screen data sources"
+              className="rounded"
+            />
+            <p className="text-sm">
+              ...which consists of data derived from multiple sources
+            </p>
           </div>
         </div>
-      </section>
+      </Section>
 
-      <section>
-        <h2>FerryFriend Native becomes FerryFriend 4.0</h2>
+      <Section title="FerryFriend Native becomes FerryFriend 4.0">
         <p>
           As the main functionality of the app began to come together, we
           gradually realized that the increase in maintainability, and ability
@@ -119,63 +116,59 @@ export default function FerryFriend() {
           the existing features from FerryFriend 3.0.
         </p>
 
-        <h3>Improvements in user interface design</h3>
+        <h3 className="text-xl sm:-ml-4">
+          Improvements in user interface design
+        </h3>
         <p>
           One of the benefits of having an existing user base was the
           availability of plenty of user feedback on existing designs. Some of
           this feedback led to redesigns of user interaction elements. First up
           was the tab navigation interface:
         </p>
-        <div className="align-items-start">
-          <div>
-            <div style={{ margin: "1rem" }}>
-              <p>Before</p>
-              <Image
-                loader={customLoader}
-                src={"/images/ff/ff-old-menu.png"}
-                height={375}
-                width={750}
-                alt="old menu"
-              />
-              <p className="">
-                The original menu was functional, but dense user controls could
-                be confusing and difficult to target.
-              </p>
-            </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="">
+            <p>Before:</p>
+            <Image
+              loader={customLoader}
+              src={"/images/ff/ff-old-menu.png"}
+              height={375}
+              width={750}
+              alt="Old menu"
+            />
+            <p className="text-sm">
+              The original menu was functional, but dense user controls could be
+              confusing and difficult to target.
+            </p>
           </div>
 
-          <div>
-            <div style={{ margin: "1rem" }}>
-              <p>After</p>
-              <Image
-                loader={customLoader}
-                src={"/images/ff/ff-menu.png"}
-                height={375}
-                width={750}
-                alt="vessel menu"
-              />
-              <p className="">
-                Using space freed up by the tab navigator, we were able to
-                redesign the route top bar to increase legibility and simplify
-                user interaction.{" "}
-              </p>
-            </div>
+          <div className="">
+            <p>After:</p>
+            <Image
+              loader={customLoader}
+              src={"/images/ff/ff-menu.png"}
+              height={375}
+              width={750}
+              alt="New menu"
+            />
+            <p className="text-sm">
+              Using space freed up by the tab navigator, we were able to
+              redesign the route top bar to increase legibility and simplify
+              user interaction.{" "}
+            </p>
           </div>
 
-          <div>
-            <div style={{ margin: "1rem" }}>
-              <Image
-                loader={customLoader}
-                src={"/images/ff/ff-tab.png"}
-                height={375}
-                width={750}
-                alt="tab navigator"
-              />
-              <p className="">
-                The tab navigator was moved from the upper margin of the route
-                screen to the bottom, improving access with one hand.
-              </p>
-            </div>
+          <div className="">
+            <Image
+              loader={customLoader}
+              src={"/images/ff/ff-tab.png"}
+              height={375}
+              width={750}
+              alt="tab navigator"
+            />
+            <p className="text-sm">
+              The tab navigator was moved from the upper margin of the route
+              screen to the bottom, improving access with one hand.
+            </p>
           </div>
         </div>
 
@@ -185,42 +178,40 @@ export default function FerryFriend() {
           usability of these screens without drastically changing their layout.
         </p>
 
-        <div className="align-items-start">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <div style={{ margin: "1rem" }}>
-              <Image
-                loader={customLoader}
-                src={"/images/ff/ff-camera.png"}
-                height={1008}
-                width={750}
-                alt="camera screen"
-              />
-              <p className="">
-                On the cameras screen, we improved touch targets on the carousel
-                viewer and increased the legibility of the map.
-              </p>
-            </div>
+            <Image
+              loader={customLoader}
+              src={"/images/ff/ff-camera.png"}
+              height={1008}
+              width={750}
+              alt="camera screen"
+              className="rounded"
+            />
+            <p className="text-sm">
+              On the cameras screen, we improved touch targets on the carousel
+              viewer and increased the legibility of the map.
+            </p>
           </div>
 
           <div>
-            <div style={{ margin: "1rem" }}>
-              <Image
-                loader={customLoader}
-                src={"/images/ff/ff-vessel.png"}
-                height={1008}
-                width={750}
-                alt="vessel screen"
-              />
-              <p className="">
-                On the vessel view screen, we added additional vessel details to
-                the vessel modal, with important details like vehicle and
-                passenger capacity.
-              </p>
-            </div>
+            <Image
+              loader={customLoader}
+              src={"/images/ff/ff-vessel.png"}
+              height={1008}
+              width={750}
+              alt="vessel screen"
+              className="rounded"
+            />
+            <p className="text-sm">
+              On the vessel view screen, we added additional vessel details to
+              the vessel modal, with important details like vehicle and
+              passenger capacity.
+            </p>
           </div>
         </div>
 
-        <h4>Dark mode</h4>
+        <h3 className="text-xl sm:-ml-4">Dark Mode</h3>
         <p>
           In response to another user request, we spent a good amount of time
           implementing a theming engine and thinking carefully about how to
@@ -229,32 +220,32 @@ export default function FerryFriend() {
           this turned out.
         </p>
 
-        <div className="justify-content-center">
-          <div style={{ margin: "1rem", maxWidth: "22rem" }}>
+        <div className="flex justify-center">
+          <div className="max-w-sm">
             <Image
               loader={customLoader}
               src={"/images/ff/ff-dark.jpeg"}
               height={1334}
               width={750}
-              alt="dark mode"
+              alt="New FerryFriend dark mode theme"
+              className="rounded"
             />
-            <p className="">Easy on the eyes</p>
+            <p className="text-sm">Easy on the eyes</p>
           </div>
         </div>
-      </section>
+      </Section>
 
-      <section>
-        <h4>Favorites</h4>
+      <Section title="Favorites">
         <p>
           Favorite routes are a key feature for regular ferry users, and we
           wanted to find a way to show schedule prediction info for favorite
-          routes directly on the home screen. Using the divors from route
+          routes directly on the home screen. Using the colors from route
           predictions to indicate severity of delay, we added badges to the
           existing favorite route component for a simple but effective solution.
         </p>
 
-        <div className="justify-content-center">
-          <div style={{ margin: "1rem", maxWidth: "40rem" }}>
+        <div className="flex justify-center">
+          <div className="max-w-sm">
             <Image
               loader={customLoader}
               src={"/images/ff/ff-favorites.png"}
@@ -262,13 +253,15 @@ export default function FerryFriend() {
               width={750}
               alt="favorites badge"
             />
-            <p className=""></p>
+            <p className="text-sm">
+              Red-Yellow-Green provides quick visual confirmation of sailing
+              delay status.
+            </p>
           </div>
         </div>
-      </section>
+      </Section>
 
-      <section>
-        <h4>Tickets</h4>
+      <Section title="Tickets">
         <p>
           Next up was a major redesign of the saved ticket display. This feature
           allows regular ferry riders to scan a Washington State Ferry ticket
@@ -278,36 +271,34 @@ export default function FerryFriend() {
           carry a physical copy of every ticket they may own.
         </p>
 
-        <div className="justify-content-center">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <div style={{ margin: "1rem", maxWidth: "22rem" }}>
-              <Image
-                loader={customLoader}
-                src={"/images/ff/ff-old-ticket.jpeg"}
-                height={1334}
-                width={750}
-                alt="old ticket menu"
-              />
-              <p className="">
-                The FerryFriend 3.0 ticket screen. Although functional, there
-                was lots of room for improvement here.
-              </p>
-            </div>
+            <Image
+              loader={customLoader}
+              src={"/images/ff/ff-old-ticket.jpeg"}
+              height={1334}
+              width={750}
+              alt="old ticket menu"
+              className="rounded"
+            />
+            <p className="text-sm">
+              The FerryFriend 3.0 ticket screen. Although functional, there was
+              lots of room for improvement here.
+            </p>
           </div>
           <div>
-            <div style={{ margin: "1rem", maxWidth: "22rem" }}>
-              <Image
-                loader={customLoader}
-                src={"/images/ff/ff-ticket.jpeg"}
-                height={1334}
-                width={750}
-                alt="new ticket screen"
-              />
-              <p className="">
-                The new ticket screen shows all relevant information in one
-                place, and emulates the look of a physical WSF ticket.
-              </p>
-            </div>
+            <Image
+              loader={customLoader}
+              src={"/images/ff/ff-ticket.jpeg"}
+              height={1334}
+              width={750}
+              alt="new ticket screen"
+              className="rounded"
+            />
+            <p className="text-sm">
+              The new ticket screen shows all relevant information in one place,
+              and emulates the look of a physical WSF ticket.
+            </p>
           </div>
         </div>
 
@@ -327,8 +318,8 @@ export default function FerryFriend() {
           </a>
           .
         </p>
-        <div className="justify-content-center">
-          <div style={{ margin: "1rem", maxWidth: "40rem" }}>
+        <div className="flex justify-center">
+          <div className="max-w-xl">
             <Image
               loader={customLoader}
               src={"/images/ff/ff-web-tix.png"}
@@ -336,16 +327,15 @@ export default function FerryFriend() {
               width={1376}
               alt="web ticket screen"
             />
-            <p className="">
+            <p className="text-sm">
               A web-based display of tickets allows ticket sharing to users who
               do not have the app installed.
             </p>
           </div>
         </div>
-      </section>
+      </Section>
 
-      <section>
-        <h2>Testing</h2>
+      <Section title="Testing">
         <p>
           As of this writing, FerryFriend 4.0 for Android is in public beta (
           <a href="https://play.google.com/store/apps/details?id=com.truecourse.FerryFriend">
@@ -365,7 +355,7 @@ export default function FerryFriend() {
           comfort zone. I am proud of what I helped make, and am looking forward
           to seeing what happens with the app in the future!
         </p>
-      </section>
+      </Section>
     </Post>
   );
 }

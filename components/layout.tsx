@@ -3,10 +3,12 @@ import React from "react";
 
 export default function Layout({
   children,
+  className,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   home,
 }: {
   children: React.ReactNode;
+  className?: string;
   home?: boolean;
 }) {
   return (
@@ -20,7 +22,7 @@ export default function Layout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" type="image/x-icon" href="favicon.ico" />
       </Head>
-      <main className="scroll-smooth">{children}</main>
+      <main className={className}>{children}</main>
     </div>
   );
 }
