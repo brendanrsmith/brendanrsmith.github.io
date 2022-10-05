@@ -12,13 +12,14 @@ export default function PortfolioCard(props: {
   return (
     <div
       className={
-        (props.hero ? "md:col-span-2" : "col-span-1") +
-        " mx-4 mb-8 h-fit overflow-clip rounded border bg-neutral-100 hover:brightness-95 dark:border-0 dark:bg-neutral-800"
+        (props.hero ? "sm:col-span-2" : "col-span-1") +
+        " " +
+        " mx-4 mb-8 overflow-clip rounded border bg-neutral-100 transition-all  hover:bg-neutral-200 dark:border-0 dark:bg-neutral-800 dark:hover:bg-neutral-700"
       }
     >
       <Link href={props.url} as={process.env.BACKEND_URL + props.url}>
-        <a className="text-inherit hover:no-underline">
-          <div className="p-2">
+        <a className="text-inherit hover:text-inherit hover:no-underline">
+          <div className="p-2 ">
             <div className="text-lg font-light no-underline">{props.title}</div>
             <div className="font-semibod h-10 text-sm">{props.subTitle}</div>
           </div>
