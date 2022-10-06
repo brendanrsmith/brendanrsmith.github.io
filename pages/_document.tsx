@@ -10,7 +10,7 @@ class MyDocument extends Document {
             rel="stylesheet"
           />
         </Head>
-        <body className="bg-neutral-50 text-neutral-900 dark:bg-neutral-900 dark:text-neutral-200">
+        <body>
           <Main />
           <NextScript />
         </body>
