@@ -12,7 +12,7 @@ export default function Layout({
   home?: boolean;
 }) {
   return (
-    <div className="min-h-screen pb-3">
+    <div className="min-h-screen">
       <Head>
         <title>Brendan Smith</title>
         <meta charSet="utf8" />
@@ -23,6 +23,9 @@ export default function Layout({
         <link rel="icon" type="image/x-icon" href="favicon.ico" />
       </Head>
       <main className={className}>{children}</main>
+      <footer className=" py-3 text-center text-xs text-neutral-300 dark:text-neutral-600">
+        <p>© {new Date().getFullYear()} Brendan Smith</p>
+      </footer>
     </div>
   );
 }

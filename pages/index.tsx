@@ -56,12 +56,15 @@ export default function Home() {
           </div>
         </div>
         <div id="portfolio" className=" m-auto mb-10 max-w-4xl ">
-          <div className="-mt-8 text-center hover:animate-pulse">
-            <a className="text-inherit hover:no-underline" href="#portfolio">
+          <div className="-mt-10 pt-2 text-center">
+            <a
+              className="text-inherit hover:animate-pulse hover:text-inherit hover:no-underline"
+              href="#portfolio"
+            >
               Projects ⤵
             </a>
           </div>
-          <div className="m-8 grid grid-cols-1 md:grid-cols-2 ">
+          <div className="my-8 mx-auto grid max-w-3xl grid-cols-1 sm:grid-cols-2 ">
             <PortfolioCard
               url={"/ferryfriend"}
               img={"/images/ff/hero-long.png"}
@@ -84,6 +87,12 @@ export default function Home() {
               img={"/images/demos/todo-square.png"}
               title={"Demonstration Projects"}
               subTitle={"Classic feature demonstration apps"}
+            />
+            <PortfolioCard
+              url={"/first-project"}
+              img={"/images/tilemaker/tile-home.png"}
+              title={"TileMaker"}
+              subTitle={"The first thing I ever built"}
             />
           </div>
         </div>

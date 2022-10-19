@@ -18,7 +18,7 @@ export default function Post({
       <div className="mx-auto mt-6 max-w-3xl ">
         <h1 className="text-3xl font-light">{title}</h1>
         <h2 className="text-base">{date}</h2>
-        <div className="divide-y-2 ">{children}</div>
+        <div className="divide-y-2">{children}</div>
       </div>
     </Layout>
   );
