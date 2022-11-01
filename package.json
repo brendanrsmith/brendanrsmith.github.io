@@ -16,7 +16,7 @@
     "@types/node": "^18.11.5",
     "@types/react": "^18.0.23",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
-    "@typescript-eslint/parser": "^5.40.1",
+    "@typescript-eslint/parser": "^5.42.0",
     "autoprefixer": "^10.4.12",
     "babel-plugin-transform-define": "^2.1.0",
     "eslint": "8.26.0",
