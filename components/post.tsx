@@ -12,8 +12,12 @@ export default function Post({
 }): JSX.Element {
   return (
     <Layout className="m-4 mb-20">
-      <Link href="/" as={`${process.env.BACKEND_URL}/#portfolio`}>
-        <a className="top-0 p-4 lg:sticky ">← Home</a>
+      <Link
+        href="/"
+        as={`${process.env.BACKEND_URL}/#portfolio`}
+        className="top-0 p-4 lg:sticky "
+      >
+        ← Home
       </Link>
       <div className="mx-auto mt-6 max-w-3xl ">
         <h1 className="text-3xl font-light">{title}</h1>
