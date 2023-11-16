@@ -18,7 +18,6 @@ export default function PortfolioCard(props: {
     >
       <Link
         href={props.url}
-        as={process.env.BACKEND_URL + props.url}
         className="text-inherit hover:text-inherit hover:no-underline"
       >
         <div className="p-2 ">
