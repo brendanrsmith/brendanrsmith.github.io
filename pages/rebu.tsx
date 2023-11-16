@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Post from "../components/post";
 import Section from "../components/section";
-import { customLoader } from "./index";
 
 export default function Rebu() {
   return (
@@ -14,7 +13,6 @@ export default function Rebu() {
               alt="Rebu home screen"
               width={1000}
               height={1000}
-              loader={customLoader}
               className="rounded"
             />
           </div>
@@ -29,7 +27,6 @@ export default function Rebu() {
 
         <div className="m-4">
           <Image
-            loader={customLoader}
             src={"/images/rebu/rebu-db.png"}
             height={1112}
             width={2734}
@@ -45,7 +42,6 @@ export default function Rebu() {
 
         <div className="m-4">
           <Image
-            loader={customLoader}
             src={"/images/rebu/rebu-wireframe.png"}
             height={1642}
             width={1868}

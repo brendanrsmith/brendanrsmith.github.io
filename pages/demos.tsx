@@ -1,6 +1,5 @@
 import Post from "../components/post";
 import Image from "next/image";
-import { customLoader } from "./index";
 import Section from "../components/section";
 
 export default function Demos() {
@@ -32,7 +31,6 @@ export default function Demos() {
         </p>
         <div className="m-4 max-w-xl shadow">
           <Image
-            loader={customLoader}
             src={"/images/demos/resty-square.png"}
             height={1280}
             width={1280}
@@ -55,7 +53,6 @@ export default function Demos() {
         </p>
         <div className="m-4 max-w-xl shadow">
           <Image
-            loader={customLoader}
             src={"/images/demos/todo-square.png"}
             height={1280}
             width={1280}
@@ -81,7 +78,6 @@ export default function Demos() {
         </p>
         <div className="m-4 max-w-xl shadow">
           <Image
-            loader={customLoader}
             src={"/images/demos/storefront-square.png"}
             height={1250}
             width={1280}

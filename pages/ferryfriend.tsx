@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { customLoader } from "./index";
 import Post from "../components/post";
 import Section from "../components/section";
 
@@ -39,7 +38,6 @@ export default function FerryFriend() {
         <div className="flex justify-center ">
           <div className="max-w-3xl ">
             <Image
-              loader={customLoader}
               src={"/images/ff/hero-long.png"}
               height={586}
               width={1024}
@@ -87,7 +85,6 @@ export default function FerryFriend() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Image
-              loader={customLoader}
               src={"/images/ff/ff-schedule.jpeg"}
               height={1334}
               width={750}
@@ -101,7 +98,6 @@ export default function FerryFriend() {
           </div>
           <div>
             <Image
-              loader={customLoader}
               src={"/images/ff/schedule-context.png"}
               height={1334}
               width={750}
@@ -140,7 +136,6 @@ export default function FerryFriend() {
           <div className="">
             <p>Before:</p>
             <Image
-              loader={customLoader}
               src={"/images/ff/ff-old-menu.png"}
               height={375}
               width={750}
@@ -155,7 +150,6 @@ export default function FerryFriend() {
           <div className="">
             <p>After:</p>
             <Image
-              loader={customLoader}
               src={"/images/ff/ff-menu.png"}
               height={375}
               width={750}
@@ -170,7 +164,6 @@ export default function FerryFriend() {
 
           <div className="">
             <Image
-              loader={customLoader}
               src={"/images/ff/ff-tab.png"}
               height={375}
               width={750}
@@ -192,7 +185,6 @@ export default function FerryFriend() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Image
-              loader={customLoader}
               src={"/images/ff/ff-camera.png"}
               height={1008}
               width={750}
@@ -207,7 +199,6 @@ export default function FerryFriend() {
 
           <div>
             <Image
-              loader={customLoader}
               src={"/images/ff/ff-vessel.png"}
               height={1008}
               width={750}
@@ -234,7 +225,6 @@ export default function FerryFriend() {
         <div className="flex justify-center">
           <div className="max-w-sm">
             <Image
-              loader={customLoader}
               src={"/images/ff/ff-dark.jpeg"}
               height={1334}
               width={750}
@@ -258,7 +248,6 @@ export default function FerryFriend() {
         <div className="flex justify-center">
           <div className="max-w-sm">
             <Image
-              loader={customLoader}
               src={"/images/ff/ff-favorites.png"}
               height={750}
               width={750}
@@ -285,7 +274,6 @@ export default function FerryFriend() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Image
-              loader={customLoader}
               src={"/images/ff/ff-old-ticket.jpeg"}
               height={1334}
               width={750}
@@ -299,7 +287,6 @@ export default function FerryFriend() {
           </div>
           <div>
             <Image
-              loader={customLoader}
               src={"/images/ff/ff-ticket.jpeg"}
               height={1334}
               width={750}
@@ -332,7 +319,6 @@ export default function FerryFriend() {
         <div className="flex justify-center">
           <div className="max-w-xl">
             <Image
-              loader={customLoader}
               src={"/images/ff/ff-web-tix.png"}
               height={1974}
               width={1376}

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { customLoader } from "../pages";
 
 export default function PortfolioCard(props: {
   url: string;
@@ -32,7 +31,6 @@ export default function PortfolioCard(props: {
           alt={props.title}
           width={200}
           height={200}
-          loader={customLoader}
         />
       </Link>
     </div>

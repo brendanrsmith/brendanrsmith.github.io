@@ -4,10 +4,6 @@ import PortfolioCard from "../components/portfolioCard";
 
 const name = "Brendan Smith";
 export const siteTitle = "Brendan Smith";
-export const customLoader = ({ src }: { src: string }): string => {
-  return src;
-};
-
 export default function Home() {
   return (
     <Layout>
@@ -15,7 +11,6 @@ export default function Home() {
         <div className="mx-auto flex h-screen w-fit flex-col items-center justify-center ">
           <Image
             priority
-            loader={customLoader}
             src="/images/profile.jpg"
             className="rounded-full"
             height={180}
@@ -64,7 +59,7 @@ export default function Home() {
               Projects ⤵
             </a>
           </div>
-          <div className="my-8 mx-auto grid max-w-3xl grid-cols-1 sm:grid-cols-2 ">
+          <div className="mx-auto my-8 grid max-w-3xl grid-cols-1 sm:grid-cols-2 ">
             <PortfolioCard
               url={"/ferryfriend"}
               img={"/images/ff/hero-long.png"}
