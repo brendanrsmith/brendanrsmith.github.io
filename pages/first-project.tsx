@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { customLoader } from ".";
 import Post from "../components/post";
 import Section from "../components/section";
 
@@ -14,7 +13,6 @@ export default function FirstProject() {
               alt="Purple and blue tile"
               width={3000}
               height={2000}
-              loader={customLoader}
             />
           </div>
         </div>
@@ -31,7 +29,6 @@ export default function FirstProject() {
               alt="Purple and blue tile"
               width={1280}
               height={1209}
-              loader={customLoader}
               className="rounded"
             />
           </div>
@@ -52,7 +49,6 @@ export default function FirstProject() {
               alt="Purple and blue tile"
               width={1280}
               height={1218}
-              loader={customLoader}
               className="rounded"
             />
           </div>
