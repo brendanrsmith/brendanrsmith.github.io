@@ -5,7 +5,7 @@ import Section from "../components/section";
 export default function FerryFriend() {
   return (
     <Post title={"FerryFriend 4"} date="February 3, 2022">
-      <p className="my-8 rounded bg-pink-100 p-3 italic dark:bg-neutral-700 ">
+      <p className="my-8 rounded bg-cyan-100 p-3 italic dark:bg-neutral-700 ">
         <strong>July 2022 Update:</strong> At long last, FerryFriend 4.0 for iOS
         has officially been released! Find it on the{" "}
         <a
