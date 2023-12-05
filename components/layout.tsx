@@ -1,7 +1,7 @@
 import Head from "next/head";
 import React from "react";
 
-export default function Layout({
+export default function PostLayout({
   children,
   className,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,9 +23,6 @@ export default function Layout({
         <link rel="icon" type="image/x-icon" href="favicon.ico" />
       </Head>
       <main className={className}>{children}</main>
-      <footer className=" py-3 text-center text-xs text-neutral-300 dark:text-neutral-600">
-        <p>© {new Date().getFullYear()} Brendan Smith</p>
-      </footer>
     </div>
   );
 }

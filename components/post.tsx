@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Layout from "../components/layout";
 
 export default function Post({
   children,
@@ -11,8 +10,8 @@ export default function Post({
   date: string;
 }): JSX.Element {
   return (
-    <Layout className="m-4 mb-20">
-      <Link href="/#portfolio" className="top-0 p-4 lg:sticky ">
+    <>
+      <Link href="/#portfolio" className="top-0 p-4 lg:sticky font-sans">
         ← Home
       </Link>
       <div className="mx-auto mt-6 max-w-prose ">
@@ -20,6 +19,6 @@ export default function Post({
         <h2 className="text-base">{date}</h2>
         <div className="divide-y-2">{children}</div>
       </div>
-    </Layout>
+    </>
   );
 }

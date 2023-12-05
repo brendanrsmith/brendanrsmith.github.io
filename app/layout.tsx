@@ -18,7 +18,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${plexSans.className} scroll-smooth`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <footer className="py-3 text-center text-xs text-neutral-300 dark:text-neutral-600">
+          <p>© {new Date().getFullYear()} Brendan Smith</p>
+        </footer>
+      </body>
     </html>
   );
 }
