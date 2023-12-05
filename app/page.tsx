@@ -4,46 +4,48 @@ import PortfolioCard from "../components/portfolioCard";
 export default function Page() {
   return (
     <div className=" mx-auto ">
-      <div className="mx-auto flex h-screen w-fit flex-col items-center justify-center ">
-        <Image
-          priority
-          src="/images/profile.jpg"
-          className="rounded-full"
-          height={180}
-          width={180}
-          alt={"Brendan Smith"}
-        />
-        <h1 className="mt-3 text-3xl">Brendan Smith</h1>
-        <div className="max-w-xs text-center text-lg">
-          <section className="pt-4">
-            <p>I am a software developer</p>
-            <p>who solves real problems</p>
-            <p>with modern technologies.</p>
-            <p className="pt-4">
-              Contact me by emailing{" "}
-              <a className="decoration-2 " href="mailto:me@brendansmith.dev">
-                me@brendansmith.dev
-              </a>
-            </p>
-          </section>
-          <section className="flex justify-around pt-4">
-            <p>
-              <a
-                className="decoration-2 "
-                href="https://github.com/brendanrsmith"
-              >
-                GitHub
-              </a>
-            </p>
-            <p>
-              <a
-                className="decoration-2 "
-                href="https://www.linkedin.com/in/brendanrsmith/"
-              >
-                LinkedIn
-              </a>
-            </p>
-          </section>
+      <div className="mx-auto flex h-screen items-center justify-center ">
+        <div className="h-fit flex-col w-fit flex items-center p-5">
+          <Image
+            priority
+            src="/images/profile.jpg"
+            className="rounded-full"
+            height={180}
+            width={180}
+            alt={"Brendan Smith"}
+          />
+          <h1 className="mt-3 text-3xl">Brendan Smith</h1>
+          <div className="max-w-xs text-center text-lg">
+            <section className="pt-4">
+              <p>I am a software developer</p>
+              <p>who solves real problems</p>
+              <p>with modern technologies.</p>
+              <p className="pt-4">
+                Contact me by emailing{" "}
+                <a className="decoration-2 " href="mailto:me@brendansmith.dev">
+                  me@brendansmith.dev
+                </a>
+              </p>
+            </section>
+            <section className="flex justify-around pt-4">
+              <p>
+                <a
+                  className="decoration-2 "
+                  href="https://github.com/brendanrsmith"
+                >
+                  GitHub
+                </a>
+              </p>
+              <p>
+                <a
+                  className="decoration-2 "
+                  href="https://www.linkedin.com/in/brendanrsmith/"
+                >
+                  LinkedIn
+                </a>
+              </p>
+            </section>
+          </div>
         </div>
       </div>
       <div id="portfolio" className=" m-auto mb-10 max-w-4xl ">
@@ -52,7 +54,7 @@ export default function Page() {
             className="text-inherit hover:animate-pulse hover:text-inherit hover:no-underline"
             href="#portfolio"
           >
-            Projects ⤵
+            Projects <span className="font-sans">⤵</span>
           </a>
         </div>
         <div className="mx-auto my-8 grid max-w-3xl grid-cols-1 sm:grid-cols-2 ">
