@@ -1,43 +1,54 @@
-# gh-pages Hello World example
+# Astro Starter Kit: Basics
 
-This example shows the most basic idea behind Next. We have 2 pages: `pages/index.js` and `pages/about.js`. The former responds to `/` requests and the latter to `/about`. Using `next/link` you can add hyperlinks between them with universal routing capabilities.
-
-## How to use
-
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
-
-```bash
-npx create-next-app --example gh-pages gh-pages-app
-# or
-yarn create next-app --example gh-pages gh-pages-app
+```sh
+npm create astro@latest -- --template basics
 ```
 
-### Deploy it to github
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
+[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
 
-Edit `env-config.js` and replace `'Next-gh-page-example'` by your project name.
+> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
-Edit `next.config.js` and replace `'Next-gh-page-example'` by your project name.
+![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
 
-1. Create repository.
-2. Link it to your github account.
-3. Publish your default branch, e.g. `main`.
-4. Any push to `main` triggers gh-workflow, builds and deploys nextjs site
+## 🚀 Project Structure
 
+Inside of your Astro project, you'll see the following folders and files:
 
-Test it:
-
-Replace `<github-user-name>` and `<github-project-name>`
-
-```bash
-https://<github-user-name>.github.io/<github-project-name>/
+```text
+/
+├── public/
+│   └── favicon.svg
+├── src/
+│   ├── components/
+│   │   └── Card.astro
+│   ├── layouts/
+│   │   └── Layout.astro
+│   └── pages/
+│       └── index.astro
+└── package.json
 ```
 
-Example:
+Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
 
-```bash
-https://github.com/thierryc/Next-gh-page-example/
+There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
 
-https://thierryc.github.io/Next-gh-page-example/
-```
+Any static assets, like images, can be placed in the `public/` directory.
 
-**Must delete gh-pages branch on remote before running `npm run deploy` to prevent merge conflicts with build files**
+## 🧞 Commands
+
+All commands are run from the root of the project, from a terminal:
+
+| Command                   | Action                                           |
+| :------------------------ | :----------------------------------------------- |
+| `npm install`             | Installs dependencies                            |
+| `npm run dev`             | Starts local dev server at `localhost:4321`      |
+| `npm run build`           | Build your production site to `./dist/`          |
+| `npm run preview`         | Preview your build locally, before deploying     |
+| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `npm run astro -- --help` | Get help using the Astro CLI                     |
+
+## 👀 Want to learn more?
+
+Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
