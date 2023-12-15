@@ -1,0 +1,34 @@
+---
+import type { MarkdownLayoutProps } from "astro";
+type Props = MarkdownLayoutProps<{
+    title: string;
+    date: string;
+}>;
+
+const { frontmatter } = Astro.props;
+import "../global.css";
+import Post from "../components/Post.astro";
+import { ViewTransitions } from "astro:transitions";
+import "@fontsource/ibm-plex-sans";
+import SiteFooter from "../components/siteFooter.astro";
+---
+
+<html>
+    <head>
+        <title>{frontmatter.title} | Brendan Smith</title>
+        <ViewTransitions />
+    </head>
+    <body>
+        <Post
+            title={frontmatter.title}
+            date={new Date(frontmatter.date).toDateString()}
+        >
+            <article
+                class="prose prose-indigo dark:prose-invert prose-a:no-underline prose-a:text-indigo-500 dark:prose-a:text-indigo-400"
+            >
+                <slot />
+            </article>
+        </Post>
+        <SiteFooter />
+    </body>
+</html>

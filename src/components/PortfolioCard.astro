@@ -1,0 +1,31 @@
+---
+interface Props {
+    url: string;
+    img: ImageMetadata;
+    title: string;
+    subTitle: string;
+    hero?: boolean;
+}
+import { Image } from "astro:assets";
+const { url, img, title, subTitle, hero = false } = Astro.props;
+---
+
+<div
+    class={(hero ? "sm:col-span-2" : "col-span-1") +
+        " " +
+        " mx-4 mb-8 overflow-clip rounded border bg-neutral-100 transition-all  hover:bg-neutral-200 dark:border-0 dark:bg-neutral-800 dark:hover:bg-neutral-700"}
+>
+    <a
+        data-astro-prefetch
+        href={url}
+        class="text-inherit hover:text-inherit hover:no-underline"
+    >
+        <div class="p-2">
+            <div class="text-lg font-light no-underline">
+                {title}
+            </div>
+            <div class="font-semibod h-10 text-sm">{subTitle}</div>
+        </div>
+        <Image class="w-full" src={img} alt={title} />
+    </a>
+</div>
