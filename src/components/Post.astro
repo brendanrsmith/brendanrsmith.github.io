@@ -6,9 +6,7 @@ interface Props {
 const { title, date } = Astro.props;
 ---
 
-<a href="/#portfolio" class="top-0 p-4 lg:sticky">
-    <span class="font-sans">←</span> Home
-</a>
+<a href="/#portfolio" class="top-0 p-4 block lg:sticky"> ← Home</a>
 <div class="mx-auto mt-6 mb-10 max-w-prose px-2 md:px-0">
     <h1 class="text-3xl font-light">{title}</h1>
     <h2 class="text-base mb-6">{date}</h2>
