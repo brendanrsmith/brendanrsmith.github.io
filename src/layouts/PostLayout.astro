@@ -2,7 +2,7 @@
 import type { MarkdownLayoutProps } from "astro";
 type Props = MarkdownLayoutProps<{
     title: string;
-    date: string;
+    date?: string;
 }>;
 
 const { frontmatter } = Astro.props;
@@ -18,10 +18,10 @@ import SiteFooter from "../components/siteFooter.astro";
         <title>{frontmatter.title} | Brendan Smith</title>
         <ViewTransitions />
     </head>
-    <body>
+    <body class="min-h-screen flex flex-col">
         <Post
             title={frontmatter.title}
-            date={new Date(frontmatter.date).toDateString()}
+            date={frontmatter.date && new Date(frontmatter.date).toDateString()}
         >
             <article
                 class="prose prose-indigo dark:prose-invert prose-a:no-underline prose-a:text-indigo-500 dark:prose-a:text-indigo-400"
