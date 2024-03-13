@@ -21,10 +21,15 @@ import SiteFooter from "../components/siteFooter.astro";
     <body class="min-h-screen flex flex-col">
         <Post
             title={frontmatter.title}
-            date={frontmatter.date && new Date(frontmatter.date).toDateString()}
+            date={frontmatter.date &&
+                new Date(frontmatter.date).toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                })}
         >
             <article
-                class="prose prose-indigo dark:prose-invert prose-a:no-underline prose-a:text-indigo-500 dark:prose-a:text-indigo-400"
+                class="prose leading-normal prose-indigo dark:prose-invert prose-a:no-underline prose-a:text-indigo-500 dark:prose-a:text-indigo-400"
             >
                 <slot />
             </article>
