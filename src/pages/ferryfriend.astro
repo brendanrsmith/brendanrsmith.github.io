@@ -29,7 +29,7 @@ import Layout from "../layouts/Layout.astro";
             >
                 App Store
             </a>
-             .
+            .
         </p>
         <Section title="Introduction">
             <p class="mb-4">
@@ -53,7 +53,11 @@ import Layout from "../layouts/Layout.astro";
             </p>
             <div class="flex justify-center">
                 <div class="max-w-3xl">
-                    <Image src={heroLong} alt="FerryFriend 4.0" />
+                    <Image
+                        loading={"eager"}
+                        src={heroLong}
+                        alt="FerryFriend 4.0"
+                    />
                 </div>
             </div>
 
@@ -65,12 +69,11 @@ import Layout from "../layouts/Layout.astro";
                 >
                     useful APIs
                 </a>{" "}
-                 for public access to ferry information. These form the backbone
-                of the data used by FerryFriend to show schedules, alerts,
-                fares, and vessel positions. Additionally, FerryFriend has its
-                own public API which provides sailing delays (using its own
-                prediction model), as well as reservation information and ticket
-                lookups.
+                for public access to ferry information. These form the backbone of
+                the data used by FerryFriend to show schedules, alerts, fares, and
+                vessel positions. Additionally, FerryFriend has its own public API
+                which provides sailing delays (using its own prediction model), as
+                well as reservation information and ticket lookups.
             </p>
             <p>
                 One of the challenges of the WSDOT API is that there are
@@ -295,7 +298,7 @@ import Layout from "../layouts/Layout.astro";
                 >
                     See for yourself here
                 </a>
-                 .
+                .
             </p>
             <div class="flex justify-center">
                 <div class="max-w-xl">
@@ -317,7 +320,7 @@ import Layout from "../layouts/Layout.astro";
                 >
                     see it on the Play Store
                 </a>
-                 ). An iOS beta is coming soon! In the meantime,{" "}
+                ). An iOS beta is coming soon! In the meantime,{" "}
                 <a href="https://www.ferryfriend.com/">
                     Check out the FerryFriend website.{" "}
                 </a>
