@@ -11,9 +11,7 @@ const { url, img, title, subTitle, hero = false } = Astro.props;
 ---
 
 <div
-    class={(hero ? "sm:col-span-2" : "col-span-1") +
-        " " +
-        " mx-4 mb-8 overflow-clip rounded border bg-neutral-100 transition-all  hover:bg-neutral-200 dark:border-0 dark:bg-neutral-800 dark:hover:bg-neutral-700"}
+    class="mx-auto max-w-4xl overflow-clip border-t border-indigo-500/80 w-full transition-all hover:underline dark:border-0"
 >
     <a
         data-astro-prefetch
@@ -26,6 +24,10 @@ const { url, img, title, subTitle, hero = false } = Astro.props;
             </div>
             <div class="font-semibod h-10 text-sm">{subTitle}</div>
         </div>
-        <Image class="w-full" src={img} alt={title} />
+        <Image
+            class="object-contain h-full max-h-96 w-full"
+            src={img}
+            alt={title}
+        />
     </a>
 </div>
