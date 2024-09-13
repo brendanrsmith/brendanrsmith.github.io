@@ -8,7 +8,7 @@
         @apply text-neutral-900 dark:text-neutral-200 selection:bg-indigo-200 dark:selection:bg-indigo-400/50;
         
         /* Background colors */
-        @apply bg-white dark:bg-neutral-900;
+        @apply bg-[#fff5f7] dark:bg-neutral-900;
     }
     a {
         /* Link colors and decoration */
