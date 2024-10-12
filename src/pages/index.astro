@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import profile from "../images/profile.jpg";
+import profile from "../images/profile-2.jpg";
 import ferryFriendHero from "../images/ff/hero-long.png";
 import rebuHero from "../images/rebu/rebu-square.png";
 import tileHome from "../images/tilemaker/tile-home.png";
@@ -17,7 +17,12 @@ import Layout from "../layouts/Layout.astro";
                     class="absolute inset-0 bg-indigo-500/70 mix-blend-screen z-10"
                 >
                 </div>
-                <Image src={profile} alt={"Brendan Smith"} loading={"eager"} />
+                <Image
+                    src={profile}
+                    alt={"Brendan Smith"}
+                    loading={"eager"}
+                    class="grayscale"
+                />
             </div>
             <section
                 class="space-y-4 text-balance text-indigo-600/80 dark:text-indigo-400 max-w-xs text-center"

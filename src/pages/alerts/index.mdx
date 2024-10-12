@@ -83,7 +83,7 @@ Its not perfect, but for a first stab at machine learning, an f-beta score of 0.
 
 ## Step 3: Integrate the model
 
-Now that I'd built my model, I was able to build a pipeline to couple the `vectorizer` preprocessing with the classifier model, and export that to a .joblib file. With that in hand, I deployed a simple fastAPI server with a `/predict` endpoint where I could send raw WSF alert json objects, and receive confidence weights for each alert category. 
+Now that I'd built my model, I was able to build a pipeline to couple the `vectorizer` preprocessing with the classifier model, and export that to a .joblib file. With that in hand, I deployed a simple fastAPI server with a `/predict` endpoint where I could send **raw** WSF alert json objects, and receive confidence weights for each alert category. 
 
 ```python
 @app.post('/predict')
