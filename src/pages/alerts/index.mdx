@@ -8,7 +8,7 @@ One of the main issues we encountered while improving FerryFriend's alert servic
 
 As we worked to surface official alerts higher in the app ui, we realized we would need some way to filter these incoming alerts by some priority metric so we could differentiate which kinds of alerts we want to push to users. (The [WSF Traveller API ↗](https://www.wsdot.wa.gov/ferries/api/schedule/documentation/rest.html) does provide an `AlertTypeID` and some flag fields, but in our experience these are... less than reliable.)
 
-## Step 1: Collect some training data
+## Step 1: Collect Some Training Data
 
 Since we weren't able to download historical alerts, was to start collecting a training set of alerts. I set up a Postgres database with a `jsonb` field to capture the entire alert object, then used a simple cron job to collect new alerts from WSF and add them to our collection.
 
@@ -60,7 +60,7 @@ In order to facilitate labelling the couple of thousand alerts we guesstimated w
 
 ![Labelling app](./sklearn_files/sklearn_13_1.png)
 
-## Step 2: Build a classifier model
+## Step 2: Build a Classifier Model
 
 After collecting and annotating a few thousand alerts, I decided to dig into building a classifier. Based on a fair amount of reading through the Scikit-learn docs (and a fairer amount of trial and error), I settled on a Support Vector Machine as the likeliest candidate for building an effective model. The full Jupyter notebook can be seen [here](/alerts/notebook), but here are the results:
 
@@ -81,7 +81,7 @@ high_priority_terminal       0.89      0.92      0.90       228
 
 Its not perfect, but for a first stab at machine learning, an f-beta score of 0.95 felt like an accomplishment. Now it was time to make the model usable.
 
-## Step 3: Integrate the model
+## Step 3: Integrate the Model
 
 Now that I'd built my model, I was able to build a pipeline to couple the `vectorizer` preprocessing with the classifier model, and export that to a .joblib file. With that in hand, I deployed a simple fastAPI server with a `/predict` endpoint where I could send **raw** WSF alert json objects, and receive confidence weights for each alert category. 
 
