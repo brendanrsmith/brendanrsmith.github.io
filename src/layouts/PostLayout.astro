@@ -8,15 +8,15 @@ type Props = MarkdownLayoutProps<{
 const { frontmatter } = Astro.props;
 import "../global.css";
 import Post from "../components/Post.astro";
-import { ViewTransitions } from "astro:transitions";
 import "@fontsource/atkinson-hyperlegible";
 import SiteFooter from "../components/siteFooter.astro";
+import { ClientRouter } from "astro:transitions";
 ---
 
 <html>
     <head>
         <title>{frontmatter.title} | Brendan Smith</title>
-        <ViewTransitions />
+        <ClientRouter />
     </head>
     <body class="min-h-screen flex flex-col">
         <Post
