@@ -3,20 +3,20 @@
 @tailwind utilities;
 
 @layer base {
-    body {
-        /* Text and text selection colors */
-        @apply text-neutral-900 dark:text-neutral-200 selection:bg-indigo-200 dark:selection:bg-indigo-400/50;
-        
-        /* Background colors */
-        @apply bg-[#fff5f7] dark:bg-neutral-900;
-    }
+  body {
+    /* Text and text selection colors */
+    @apply text-neutral-900 dark:text-neutral-200 selection:bg-red-200 dark:selection:bg-indigo-400/50;
+
+    /* Background colors */
+    @apply bg-[#fff5f7] dark:bg-neutral-900;
+  }
+  a {
+    /* Link colors and decoration */
+    @apply text-indigo-500 underline-offset-4 dark:text-indigo-400 hover:underline;
+  }
+  @media (prefers-contrast: more) {
     a {
-        /* Link colors and decoration */
-        @apply text-indigo-500 underline-offset-4 dark:text-indigo-400 hover:underline;
+      text-decoration: underline; /* Directly apply the style */
     }
-    @media (prefers-contrast: more) {
-        a {
-            text-decoration: underline; /* Directly apply the style */
-        }
-    }
+  }
 }
