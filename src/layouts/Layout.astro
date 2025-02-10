@@ -10,12 +10,18 @@ import "@fontsource/atkinson-hyperlegible";
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="description" content="Brendan Smith's personal portfolio" />
+        <meta name="description" content="I am a software developer who solves real problems with modern technologies." />
         <meta name="keywords" content="HTML, CSS, JavaScript" />
         <meta name="author" content="Brendan Smith" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="image" content="/images/profile-2.jpg" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <meta name="generator" content={Astro.generator} />
+        <meta property="og:title" content={title} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={Astro.url} />
+        <meta property="og:description" content="I am a software developer who solves real problems with modern technologies." />
+        <meta property="og:image" content="/images/profile-2.jpg" />
         <title>{title}</title>
         <ClientRouter />
     </head>
