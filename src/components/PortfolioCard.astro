@@ -11,14 +11,14 @@ const { url, img, title, subTitle } = Astro.props;
 ---
 
 <div
-    class="mx-auto max-w-4xl overflow-clip border-t border-indigo-500/80 w-full transition-all hover:underline dark:border-0"
+    class="mx-auto max-w-4xl hover:outline overflow-clip border-indigo-500/80 w-full transition-all p-3"
 >
     <a
         data-astro-prefetch
         href={url}
         class="text-inherit hover:text-inherit hover:no-underline"
     >
-        <div class="p-2">
+        <div>
             <div class="text-lg font-light no-underline">
                 {title}
             </div>
