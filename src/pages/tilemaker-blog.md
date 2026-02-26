@@ -31,4 +31,4 @@ relatively short period of time. This project felt expansive in
 its possibility at the time, and was a definitey cayalyst for my
 getting more serious about pursiing software developement.
 
-Plus, it's still fun to try and design the *perfect* tile.
+Plus, it's still fun to try and design the _perfect_ tile.

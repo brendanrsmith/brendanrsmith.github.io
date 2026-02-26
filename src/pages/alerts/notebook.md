@@ -44,6 +44,7 @@ data.head()
     .dataframe thead th {
         text-align: right;
     }
+
 </style>
 <table border="1" class="dataframe">
   <thead>
@@ -148,7 +149,6 @@ data['alert'].head()
 
 ```
 
-
     0    [ivrtext, null, sortseq, 2, alerttyp, alert, b...
     1    [ivrtext, null, sortseq, 2, alerttyp, alert, b...
     2    [ivrtext, null, sortseq, 2, alerttyp, alert, b...
@@ -169,7 +169,7 @@ print('Train:', len(X_train.toarray()), '\n Test:', len(X_test.toarray()))
 print(X_train.shape)
 ```
 
-    Train: 1524 
+    Train: 1524
      Test: 1017
     (1524, 9157)
 
@@ -261,13 +261,13 @@ print(classification_report(y_test, y_pred, target_names=categories))
 ```
 
                             precision    recall  f1-score   support
-    
+
         low_priority_alert       1.00      1.00      1.00       150
      normal_priority_alert       0.98      0.99      0.99       368
       high_priority_vessel       0.95      0.85      0.89       110
     high_priority_terminal       0.89      0.92      0.90       228
       sailing_cancellation       0.92      0.94      0.93       161
-    
+
                   accuracy                           0.95      1017
                  macro avg       0.95      0.94      0.94      1017
               weighted avg       0.95      0.95      0.95      1017

@@ -1,18 +1,18 @@
 ---
 interface Props {
-    title: string;
-    date?: string;
+  title: string;
+  date?: string;
 }
 const { title, date } = Astro.props;
 ---
 
 <a href="/" class="top-0 p-4 sm:text-lg block sm:w-fit"> ← Home</a>
 <div class="mt-6 mb-10 px-2 md:px-0 flex-1">
-    <div class="max-w-prose w-full mx-auto">
-        <h1 class="text-3xl font-light">{title}</h1>
-        {date && <h2 class="mb-6 mt-2">{date}</h2>}
-    </div>
-    <div class="mt-10">
-        <slot />
-    </div>
+  <div class="max-w-prose w-full mx-auto">
+    <h1 class="text-3xl font-light">{title}</h1>
+    {date && <h2 class="mb-6 mt-2">{date}</h2>}
+  </div>
+  <div class="mt-10">
+    <slot />
+  </div>
 </div>
