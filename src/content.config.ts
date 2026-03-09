@@ -7,6 +7,7 @@ const writing = defineCollection({
     date: z.string().optional(),
     description: z.string().optional(),
     draft: z.boolean().default(false),
+    listed: z.boolean().default(true),
   }),
 });
 

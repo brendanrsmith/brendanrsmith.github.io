@@ -3,11 +3,11 @@ title: FerryFriend Alert Classifier
 date: "2024-06-27"
 description: Building a machine learning classifier to prioritize Washington State Ferries alerts by urgency.
 ---
-import  Sidenote from "../../components/Sidenote.astro";
+import Sidenote from "../../../components/Sidenote.astro";
 
 One of the main issues we encountered while improving FerryFriend's alert service was how to handle the sometimes overwhelming pace of alerts coming from the WSF system. Often, important time-sensitive schedule alerts (i.e. _"This sailing is cancelled"_) will be mixed in with numerous, lower priority alerts. The perennial example we see is _"the ADA Elevator is out of service on this vessel."_ Potentially important to some users! But probably not the same level of urgency as a cancelled sailing.
 
-As we worked to surface official alerts higher in the app ui, we realized we would need some way to filter these incoming alerts by some priority metric so we could differentiate which kinds of alerts we want to push to users. 
+As we worked to surface official alerts higher in the app ui, we realized we would need some way to filter these incoming alerts by some priority metric so we could differentiate which kinds of alerts we want to push to users.
 
 <Sidenote>
 The [WSF Traveller API ↗](https://www.wsdot.wa.gov/ferries/api/schedule/documentation/rest.html) does provide an `AlertTypeID` and some flag fields, but in our experience these are... less than reliable.
@@ -15,7 +15,7 @@ The [WSF Traveller API ↗](https://www.wsdot.wa.gov/ferries/api/schedule/docume
 
 ## Collect Training Data
 
-Since we weren't able to download historical alerts, the first step was to start collecting a training set of alerts. I set up a Postgres database with a `<jsonb>` field to capture the entire alert object, then used a simple cron job to collect new alerts from WSF and add them to our collection.
+Since we weren't able to download historical alerts, the first step was to start collecting a training set of alerts. I set up a Postgres database with a `jsonb` field to capture the entire alert object, then used a simple cron job to collect new alerts from WSF and add them to our collection.
 
 Next we had to annotate the data. Based on some discussions with various users, we narrowed our categories down to 5 main types of alerts:
 
@@ -27,14 +27,14 @@ Next we had to annotate the data. Based on some discussions with various users, 
 
 In order to facilitate labelling the couple of thousand alerts we guesstimated would be needed to train up a model, I decided to take the opportunity to build a little webapp to help me label things quickly. Admittedly I maybe went a little overboard with this part of the project, but it was a great chance to play with setting up a PWA and honestly, being able to pull out my phone and quickly categorize 20 or 30 alerts every day or two made the entire labelling process much more painless.
 
-![Labelling app](/images/alerts/sklearn_13_1.png)
+![Labelling app](./sklearn_13_1.png)
 
 ## Build a Classifier Model
 
-After collecting and annotating a few thousand alerts, I decided to dig into building a classifier. Based on a fair amount of reading through the Scikit-learn docs (and a fairer amount of trial and error), I settled on a Support Vector Machine as the likeliest candidate for building an effective model. 
+After collecting and annotating a few thousand alerts, I decided to dig into building a classifier. This process was entirely new to me. Based on a fair amount of reading through the Scikit-learn docs (and a fairer amount of trial and error), I settled on a Support Vector Machine as the likeliest candidate for building an effective model.
 
 <Sidenote>
-The full Jupyter notebook can be seen [here](/alerts/notebook).
+The full Jupyter notebook can be seen [here](/writing/ferry-alert-classifier/notebook).
 </Sidenote>
 
 ```
@@ -43,7 +43,7 @@ The full Jupyter notebook can be seen [here](/alerts/notebook).
 low_priority_alert       1.00      1.00      1.00       150
 normal_priority_alert    0.98      0.99      0.99       368
 high_priority_vessel     0.95      0.85      0.89       110
-high_priority_termina    0.89      0.92      0.90       228
+high_priority_terminal   0.89      0.92      0.90       228
 sailing_cancellation     0.92      0.94      0.93       161
 
         accuracy                             0.95      1017
@@ -51,7 +51,7 @@ sailing_cancellation     0.92      0.94      0.93       161
         weighted avg     0.95      0.95      0.95      1017
 ```
 
-![Confusion Matrix](/images/alerts/sklearn_17_1.png)
+![Confusion Matrix](./sklearn_17_1.png)
 
 Its not perfect, but for a first stab at machine learning, an f-beta score of 0.95 felt like an accomplishment. Now it was time to make the model usable.
 

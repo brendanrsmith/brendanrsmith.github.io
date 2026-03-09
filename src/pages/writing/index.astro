@@ -4,7 +4,7 @@ import "../../styles/zones/writing.css";
 import { getCollection } from "astro:content";
 
 const posts = (await getCollection("writing"))
-  .filter((p) => !p.data.draft)
+  .filter((p) => !p.data.draft && p.data.listed !== false)
   .sort((a, b) => {
     const aDate = a.data.date ? new Date(a.data.date).getTime() : 0;
     const bDate = b.data.date ? new Date(b.data.date).getTime() : 0;
@@ -51,7 +51,7 @@ const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
                   })
                 : null;
               return (
-                <a href={`/writing/${post.id.replace(/\.(md|mdx)$/, "")}`} class="writing-row">
+                <a href={`/writing/${post.id.replace(/\/index\.(md|mdx)$/, "").replace(/\.(md|mdx)$/, "")}`} class="writing-row">
                   <span class="writing-row-date">{date ?? "—"}</span>
                   <span class="writing-row-title">{post.data.title}</span>
                 </a>
