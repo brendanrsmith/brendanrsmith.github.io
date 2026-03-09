@@ -34,7 +34,7 @@ const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
       {
         posts.length === 0 && (
           <p style="color: var(--muted); margin-top: 2rem;">
-            Nothing here yet.
+            There is simply nothing here.
           </p>
         )
       }
@@ -44,15 +44,12 @@ const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
           <>
             <p class="writing-year">{year}</p>
             {byYear[year].map((post) => {
-              const date = post.data.date
-                ? new Date(post.data.date).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  })
-                : null;
               return (
-                <a href={`/writing/${post.id.replace(/\/index\.(md|mdx)$/, "").replace(/\.(md|mdx)$/, "")}`} class="writing-row">
-                  <span class="writing-row-date">{date ?? "—"}</span>
+                <a
+                  href={`/writing/${post.id.replace(/\/index\.(md|mdx)$/, "").replace(/\.(md|mdx)$/, "")}`}
+                  class="writing-row"
+                >
+                  <span class="writing-row-date" />
                   <span class="writing-row-title">{post.data.title}</span>
                 </a>
               );
