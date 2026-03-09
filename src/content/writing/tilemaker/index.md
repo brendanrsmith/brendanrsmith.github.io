@@ -1,17 +1,16 @@
 ---
 title: TileMaker
-layout: "../layouts/PostLayout.astro"
-date: 2022-10-05
+date: "2022-10-05"
 ---
 
-![Purple and blue tile](../images/tilemaker/tile-purple.png)
+![Purple and blue tile](tile-purple.png)
 
 TileMaker is the first thing functioning web application I ever
 built. A last minute application to a coding bootcamp, I
 constructed this app from start to finish in two days, over
 christmas, while visiting my parents.
 
-![Tilemaker screenshot](../images/tilemaker/tile-home.png)
+![Tilemaker screenshot](tile-home.png)
 
 Built using basic HTML, CSS, and (poorly understood) Javascipt,
 along with extensive googling, it allows for users to design a
@@ -21,7 +20,7 @@ canvas element, with an option to save individual
 'mosaics' using the browser's localStorage. This
 simple recipe gives rise to lots of interesting designs.
 
-![Tile Gallery](../images/tilemaker/tile-gallery.png)
+![Tile Gallery](tile-gallery.png)
 
 Later, I deployed the site to GitHub Pages, where it [lives to this day](https://brendanrsmith.github.io/tilemaker/).
 
