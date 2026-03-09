@@ -1,0 +1,16 @@
+---
+// Gallery zone — Vince Lo/PXP-inspired: fixed frame, hover previews, image-forward
+// Styling TBD
+import Base from "./Base.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = "Photos", description } = Astro.props;
+---
+
+<Base title={`${title} | Brendan Smith`} description={description}>
+  <slot />
+</Base>

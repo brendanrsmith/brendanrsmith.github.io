@@ -1,40 +1,34 @@
 ---
 import type { MarkdownLayoutProps } from "astro";
+import Base from "./Base.astro";
+import Post from "../components/Post.astro";
+import SiteFooter from "../components/siteFooter.astro";
+
 type Props = MarkdownLayoutProps<{
   title: string;
   date?: string;
 }>;
 
 const { frontmatter } = Astro.props;
-import "../global.css";
-import Post from "../components/Post.astro";
-import "@fontsource/atkinson-hyperlegible";
-import SiteFooter from "../components/siteFooter.astro";
-import { ClientRouter } from "astro:transitions";
+
+const formattedDate =
+  frontmatter.date &&
+  new Date(frontmatter.date).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 ---
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>{frontmatter.title} | Brendan Smith</title>
-    <ClientRouter />
-  </head>
-  <body class="min-h-screen flex flex-col">
-    <Post
-      title={frontmatter.title}
-      date={frontmatter.date &&
-        new Date(frontmatter.date).toLocaleDateString(undefined, {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        })}
-    >
+<Base title={`${frontmatter.title} | Brendan Smith`}>
+  <div class="min-h-screen flex flex-col">
+    <Post title={frontmatter.title} date={formattedDate}>
       <article
-        class="prose prose-h2:font-medium sm:prose-lg mx-auto max-w-prose leading-snug sm:leading-snug prose-rose dark:prose-invert prose-a:no-underline prose-a:text-indigo-500 dark:prose-a:text-indigo-400 prose-a:hover:underline dark:prose-a:hover:under\"
+        class="prose prose-h2:font-medium sm:prose-lg mx-auto max-w-prose leading-snug sm:leading-snug prose-rose dark:prose-invert prose-a:no-underline prose-a:text-indigo-500 dark:prose-a:text-indigo-400 prose-a:hover:underline dark:prose-a:hover:underline"
       >
         <slot />
       </article>
     </Post>
     <SiteFooter />
-  </body>
-</html>
+  </div>
+</Base>

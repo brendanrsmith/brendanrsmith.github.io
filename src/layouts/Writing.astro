@@ -1,0 +1,36 @@
+---
+import Base from "./Base.astro";
+import "../styles/zones/writing.css";
+
+interface Props {
+  title: string;
+  date?: string;
+  description?: string;
+}
+
+const { title, date, description } = Astro.props;
+
+const formattedDate =
+  date &&
+  new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+---
+
+<Base title={`${title} | Brendan Smith`} description={description}>
+  <div class="writing-zone">
+    <nav class="writing-nav">
+      <a href="/writing">← writing</a>
+      <a href="/">brendansmith.dev</a>
+    </nav>
+    <header class="writing-header">
+      <h1 class="writing-title">{title}</h1>
+      {formattedDate && <p class="writing-date">{formattedDate}</p>}
+    </header>
+    <div class="writing-article">
+      <slot />
+    </div>
+  </div>
+</Base>

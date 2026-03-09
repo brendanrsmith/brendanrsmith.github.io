@@ -1,0 +1,65 @@
+---
+import Base from "../../layouts/Base.astro";
+import "../../styles/zones/writing.css";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("writing"))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => {
+    const aDate = a.data.date ? new Date(a.data.date).getTime() : 0;
+    const bDate = b.data.date ? new Date(b.data.date).getTime() : 0;
+    return bDate - aDate;
+  });
+
+// Group by year, descending
+const byYear: Record<string, typeof posts> = {};
+for (const post of posts) {
+  const year = post.data.date
+    ? String(new Date(post.data.date).getFullYear())
+    : "—";
+  if (!byYear[year]) byYear[year] = [];
+  byYear[year].push(post);
+}
+const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
+---
+
+<Base title="Writing | Brendan Smith">
+  <div class="writing-zone">
+    <nav class="writing-nav">
+      <a href="/">← brendansmith.dev</a>
+    </nav>
+    <div class="writing-index">
+      <h1 class="writing-index-heading">Writing</h1>
+
+      {
+        posts.length === 0 && (
+          <p style="color: var(--muted); margin-top: 2rem;">
+            Nothing here yet.
+          </p>
+        )
+      }
+
+      {
+        years.map((year) => (
+          <>
+            <p class="writing-year">{year}</p>
+            {byYear[year].map((post) => {
+              const date = post.data.date
+                ? new Date(post.data.date).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                  })
+                : null;
+              return (
+                <a href={`/writing/${post.id.replace(/\.(md|mdx)$/, "")}`} class="writing-row">
+                  <span class="writing-row-date">{date ?? "—"}</span>
+                  <span class="writing-row-title">{post.data.title}</span>
+                </a>
+              );
+            })}
+          </>
+        ))
+      }
+    </div>
+  </div>
+</Base>

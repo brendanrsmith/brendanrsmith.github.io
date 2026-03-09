@@ -1,0 +1,305 @@
+/* Writing zone — text-forward, Curve/bnjmnmddn-inspired */
+/* Typography IS the design. Color and space do the work. */
+
+.writing-zone {
+  --accent: #4338ca;
+  --bg: #fff5f7;
+  --text: #111111;
+  --muted: #888888;
+  --border: #e0d8dc;
+  --on-accent: #ffffff; /* text color when accent is used as bg */
+
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+@media (prefers-color-scheme: dark) {
+  .writing-zone {
+    --accent: #818cf8; /* indigo-400 — lighter for dark bg */
+    --bg: #131010; /* warm near-black */
+    --text: #e8ddd8; /* warm off-white */
+    --muted: #7a706c; /* warm mid-tone */
+    --border: #2a2020;
+    --on-accent: #111111; /* dark text on lighter accent */
+  }
+}
+
+/* ─── Fixed nav ─────────────────────────────────────────── */
+
+.writing-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 0.875rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  z-index: 100;
+  /* sits on top of content without obscuring with a bg */
+  mix-blend-mode: multiply;
+}
+
+.writing-nav a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.writing-nav a:hover {
+  color: var(--accent);
+}
+
+/* ─── Post layout ────────────────────────────────────────── */
+
+.writing-header {
+  padding: 7rem 1.5rem 2rem;
+  max-width: 52rem;
+  margin: 0 auto;
+}
+
+.writing-title {
+  font-size: clamp(2rem, 3vw, 4.5rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+
+.writing-date {
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Article: prose column + right space for sidenote floats */
+.writing-article {
+  padding: 1.5rem 1.5rem 8rem;
+  max-width: 52rem;
+  margin: 0 auto;
+}
+
+.writing-article > * {
+  max-width: 60ch;
+}
+
+.writing-article p,
+.writing-article li {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  margin-bottom: 1.25rem;
+}
+
+.writing-article ul,
+.writing-article ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.writing-article li {
+  margin-bottom: 0.375rem;
+}
+
+.writing-article h2 {
+  font-size: 1.375rem;
+  font-weight: 400;
+  color: var(--accent);
+  margin-top: 3rem;
+  margin-bottom: 0.75rem;
+  max-width: 60ch;
+}
+
+.writing-article h3 {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  max-width: 60ch;
+}
+
+/* Links: accent underline → full-bg on hover (bnjmnmddn) */
+.writing-article a {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+  padding: 0 2px;
+  margin: 0 -2px;
+  transition:
+    background 0.08s,
+    color 0.08s;
+}
+
+.writing-article a:hover {
+  background-color: var(--accent);
+  color: var(--on-accent);
+  text-decoration: none;
+}
+
+.writing-article code {
+  font-size: 0.875em;
+  background: rgba(67, 56, 202, 0.08); /* indigo-700 at low opacity */
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
+
+.writing-article pre {
+  background: #12111f; /* near-black with indigo lean */
+  color: #e8e8e8;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  margin: 2rem 0 2rem -1.5rem; /* bleed left edge */
+  font-size: 0.875rem;
+  line-height: 1.6;
+  max-width: none; /* override the 60ch cap */
+}
+
+.writing-article pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+.writing-article img {
+  max-width: 100%;
+  height: auto;
+  margin: 2rem 0;
+  display: block;
+}
+
+.writing-article blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 1.25rem;
+  margin: 2rem 0;
+  color: var(--muted);
+  max-width: 60ch;
+}
+
+.writing-article hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 3rem 0;
+  max-width: 60ch;
+}
+
+/* ─── Sidenotes (Tufte-style float) ─────────────────────── */
+
+.sidenote {
+  float: right;
+  clear: right;
+  margin-right: -13rem;
+  width: 11rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted);
+  border-left: 2px solid var(--accent);
+  padding-left: 0.75rem;
+  margin-top: -8rem;
+  margin-bottom: 1rem;
+  max-width: none; /* override the 60ch cap */
+}
+
+@media (max-width: 900px) {
+  .sidenote {
+    float: none;
+    margin-right: 0;
+    width: auto;
+    margin: 1rem 0;
+    border-left: 2px solid var(--accent);
+    border-top: none;
+  }
+}
+
+/* ─── Index / list page ──────────────────────────────────── */
+
+.writing-index {
+  padding: 7rem 1.5rem 8rem;
+  max-width: 52rem;
+  margin: 0 auto;
+}
+
+.writing-index-heading {
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  color: var(--accent);
+  margin-bottom: 3rem;
+  line-height: 1;
+}
+
+.writing-year {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-top: 3rem;
+  margin-bottom: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.writing-row {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  gap: 1.5rem;
+  align-items: baseline;
+  padding: 0.75rem 0;
+  text-decoration: none;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  /* extend hover bg full bleed to container edges */
+  margin: 0 -1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  transition:
+    background 0.08s,
+    color 0.08s;
+}
+
+.writing-row:hover {
+  background-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.writing-row-date {
+  font-size: 0.8125rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transition: color 0.08s;
+}
+
+.writing-row:hover .writing-row-date {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.writing-row-title {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+/* ─── Dark mode property overrides ──────────────────────── */
+/* Must come after base rules to win in the cascade.         */
+/* Variable overrides live at the top in .writing-zone.      */
+
+@media (prefers-color-scheme: dark) {
+  .writing-nav {
+    mix-blend-mode: screen;
+  }
+
+  .writing-article code {
+    background: rgba(129, 140, 248, 0.15); /* indigo-400 at low opacity */
+  }
+
+  .writing-article pre {
+    background: #0f0e1a; /* near-black with indigo lean */
+  }
+
+  .writing-row:hover .writing-row-date {
+    color: rgba(0, 0, 0, 0.5);
+  }
+}

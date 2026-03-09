@@ -1,0 +1,23 @@
+---
+// Lab zone — bare minimum wrapper for experiments.
+// Each lab page can use this, or skip it entirely and write their own <html>.
+// No Base, no global styles, no inherited anything.
+
+interface Props {
+  title?: string;
+}
+
+const { title = "Lab" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
