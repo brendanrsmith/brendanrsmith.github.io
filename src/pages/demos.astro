@@ -5,6 +5,9 @@ import Section from "../components/Section.astro";
 import restySquare from "../images/demos/resty-square.png";
 import todoSquare from "../images/demos/todo-square.png";
 import storefrontSquare from "../images/demos/storefront-square.png";
+import rebuSquare from "../images/rebu/rebu-square.png";
+import rebuUml from "../images/rebu/rebu-db.png";
+import rebuWireframe from "../images/rebu/rebu-wireframe.png";
 import Layout from "../layouts/Layout.astro";
 ---
 
@@ -76,6 +79,32 @@ import Layout from "../layouts/Layout.astro";
                         class="rounded-sm"
                     />
                 </div>
+            </Section>
+
+            <Section title="Rebu Native">
+                <p>
+                    Rebu is a React Native app built during a 4-day team sprint,
+                    providing the basic functionality of a ride-sharing app.
+                    Riders can request pickup, set a destination, and be notified
+                    of pickup and dropoff; drivers can select a ride, see the
+                    pickup location, and notify passengers of events.
+                </p>
+                <div class="m-4 max-w-lg">
+                    <Image src={rebuSquare} alt="Rebu home screen" class="rounded-sm" />
+                </div>
+                <p>
+                    Backend: Express on Heroku, MongoDB on Atlas. Frontend: React
+                    Native deployed to Expo. Wireframes were completed before any
+                    code was written, which scoped goals early and provided a
+                    road map for every screen.
+                </p>
+                <div class="m-4">
+                    <Image src={rebuWireframe} alt="Rebu wireframe" class="rounded-sm" />
+                </div>
+                <div class="m-4">
+                    <Image src={rebuUml} alt="Rebu DB schema" class="rounded-sm" />
+                </div>
+                <a href="https://github.com/CeylinBrooks/RebuNative">Github Repo</a>
             </Section>
 
             <Section title="Storefront">

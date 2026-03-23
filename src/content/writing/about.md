@@ -1,6 +1,7 @@
 ---
 title: About
-layout: "../layouts/PostLayout.astro"
+date: "2022-01-01"
+description: About this site.
 ---
 
 This site has been a fun place for me to experiment with tools and technologies over the last few years. Currently, it's built using:

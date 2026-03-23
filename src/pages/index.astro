@@ -3,10 +3,9 @@ import { Image } from "astro:assets";
 import Portfoliocard from "../components/PortfolioCard.astro";
 import ferryFriendHero from "../images/ff/hero-long.png";
 import profile from "../images/profile-2.jpg";
-import rebuHero from "../images/rebu/rebu-square.png";
 import tileHome from "../content/writing/tilemaker/tile-home.png";
 import Layout from "../layouts/Layout.astro";
-import alertClassifierHero from "./alerts/sklearn_files/sklearn_17_1.png";
+import alertClassifierHero from "../content/writing/ferryfriend-alert-classifier/sklearn_17_1.png";
 ---
 
 <Layout title="Brendan Smith">
@@ -67,25 +66,19 @@ import alertClassifierHero from "./alerts/sklearn_files/sklearn_17_1.png";
     </div>
     <div class="mx-auto my-8 grid">
       <Portfoliocard
-        url={"/alerts"}
+        url={"/writing/ferryfriend-alert-classifier"}
         img={alertClassifierHero}
         title={"FerryFriend Alert Classifier"}
         subTitle={"Automated classification of ferry alerts using machine learning"}
       />
       <Portfoliocard
-        url={"/ferryfriend"}
+        url={"/writing/ferryfriend-4"}
         img={ferryFriendHero}
         title={"FerryFriend 4"}
         subTitle={"A ground-up rebuild of the FerryFriend app using React Native"}
       />
-      <Portfoliocard
-        url={"/rebu"}
-        img={rebuHero}
-        title={"Rebu Native"}
-        subTitle={"A React Native ridesharing app demo completed in 4 days"}
-      />
-      <Portfoliocard
-        url={"/tilemaker-blog"}
+<Portfoliocard
+        url={"/writing/tilemaker"}
         img={tileHome}
         title={"TileMaker"}
         subTitle={"The first thing I ever built"}
