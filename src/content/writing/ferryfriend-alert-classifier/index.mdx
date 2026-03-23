@@ -5,7 +5,7 @@ description: Building a machine learning classifier to prioritize Washington Sta
 ---
 import Sidenote from "../../../components/Sidenote.astro";
 
-One of the main issues we encountered while improving FerryFriend's alert service was how to handle the sometimes overwhelming pace of alerts coming from the WSF system. Often, important time-sensitive schedule alerts (i.e. _"This sailing is cancelled"_) will be mixed in with numerous, lower priority alerts. The perennial example we see is _"the ADA Elevator is out of service on this vessel."_ Potentially important to some users! But probably not the same level of urgency as a cancelled sailing.
+One of the main issues we encountered while improving FerryFriend's alert service was how to handle the sometimes overwhelming pace of alerts coming from the WSF system. Often, important time-sensitive schedule alerts (e.g. _"This sailing is cancelled"_) will be mixed in with numerous, lower priority alerts. The perennial example we see is _"the ADA Elevator is out of service on this vessel."_ Potentially important to some users! But probably not the same level of urgency as a cancelled sailing.
 
 As we worked to surface official alerts higher in the app ui, we realized we would need some way to filter these incoming alerts by some priority metric so we could differentiate which kinds of alerts we want to push to users.
 
