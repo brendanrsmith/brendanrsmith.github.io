@@ -3,13 +3,11 @@
 
 .writing-zone {
   --accent: #4338ca;
-  --bg: #fff5f7;
   --text: #111111;
   --muted: #888888;
   --border: #e0d8dc;
   --on-accent: #ffffff; /* text color when accent is used as bg */
 
-  background-color: var(--bg);
   color: var(--text);
   min-height: 100vh;
 }
@@ -17,7 +15,6 @@
 @media (prefers-color-scheme: dark) {
   .writing-zone {
     --accent: #818cf8; /* indigo-400 — lighter for dark bg */
-    --bg: #131010; /* warm near-black */
     --text: #e8ddd8; /* warm off-white */
     --muted: #7a706c; /* warm mid-tone */
     --border: #2a2020;
