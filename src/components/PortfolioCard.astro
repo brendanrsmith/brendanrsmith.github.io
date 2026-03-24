@@ -33,28 +33,32 @@ const { url, img, title, subTitle } = Astro.props;
 </div>
 
 <script>
+  const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+  const ctx = new AudioCtx();
+
   function hapticLight() {
     if (navigator.vibrate) {
-      navigator.vibrate(10);
+      navigator.vibrate(12);
       return;
     }
-    // Audio fallback (iOS etc.) — brief low-freq noise burst
-    const ctx = new AudioContext();
-    const buf = ctx.createBuffer(1, ctx.sampleRate * 0.015, ctx.sampleRate);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
-    const src = ctx.createBufferSource();
-    const filter = ctx.createBiquadFilter();
-    filter.type = "bandpass";
-    filter.frequency.value = 180;
-    filter.Q.value = 0.5;
-    const gain = ctx.createGain();
-    gain.gain.value = 0.15;
-    src.buffer = buf;
-    src.connect(filter);
-    filter.connect(gain);
-    gain.connect(ctx.destination);
-    src.start();
+    // Audio fallback — low-freq thump through speaker (felt more than heard)
+    ctx.resume().then(() => {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.02, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource();
+      const filter = ctx.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.value = 80;
+      filter.Q.value = 0.8;
+      const gain = ctx.createGain();
+      gain.gain.value = 0.8;
+      src.buffer = buf;
+      src.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      src.start();
+    });
   }
 
   document.querySelectorAll(".portfolio-card").forEach((card) => {
