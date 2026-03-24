@@ -24,6 +24,7 @@ There are no tests in this project.
 The site is organized into independent "zones", each with its own layout and stylesheet. Zones share a common `Base.astro` shell but are visually independent.
 
 **Layouts** (`src/layouts/`):
+
 - `Base.astro` — minimal HTML shell: `<html>`, `<head>`, font loading, `<ClientRouter>`, `global.css`. No nav, no footer, no visual chrome.
 - `Layout.astro` — wraps Base; used by existing case-study pages. Adds `SiteFooter`.
 - `PostLayout.astro` — wraps Base; used by legacy markdown pages via `layout:` frontmatter.
@@ -32,7 +33,8 @@ The site is organized into independent "zones", each with its own layout and sty
 - `Lab.astro` — bare minimum wrapper for standalone experiments. No Base inheritance.
 
 **Zone stylesheets** (`src/styles/zones/`):
-- `writing.css` — writing zone styles. Pure CSS, no Tailwind. Uses CSS custom properties (`--accent`, `--bg`, `--text`, etc.) with `@media (prefers-color-scheme: dark)` overrides at the bottom of the file (must come *after* base rules to win the cascade).
+
+- `writing.css` — writing zone styles. Pure CSS, no Tailwind. Uses CSS custom properties (`--accent`, `--bg`, `--text`, etc.) with `@media (prefers-color-scheme: dark)` overrides at the bottom of the file (must come _after_ base rules to win the cascade).
 
 **Global styles** (`src/global.css`): Tailwind v4 import, Atkinson Hyperlegible font, base body/link colors. Used by all zones via Base.
 
@@ -45,6 +47,7 @@ Writing posts live in `src/content/writing/` and are defined in `src/content.con
 **`listed: false`** — marks a page as a sub-page/appendix. It builds at its route but is excluded from the `/writing` index. Use for notebook pages, appendices, etc.
 
 **Subdirectory structure** — posts with sub-pages use a directory:
+
 ```
 src/content/writing/
   my-post/
@@ -55,8 +58,9 @@ src/content/writing/
 ```
 
 **Slug normalization** (in `[...slug].astro` and `index.astro`):
+
 ```js
-post.id.replace(/\/index\.(md|mdx)$/, "").replace(/\.(md|mdx)$/, "")
+post.id.replace(/\/index\.(md|mdx)$/, "").replace(/\.(md|mdx)$/, "");
 ```
 
 ### Routes
@@ -92,7 +96,7 @@ Legacy pages (`/ferryfriend`, `/rebu`, `/alerts`, `/avybot`, etc.) remain in `sr
 
 - **Zone stylesheets**: pure CSS for zone-specific design. Zone styles are intentional design documents, not utility collections.
 - **Tailwind**: available everywhere via `global.css`, used in legacy pages and for quick utilities in `.astro` files. Not used in zone CSS files.
-- **Dark mode property overrides** must appear *after* base rules in the CSS file. CSS variable overrides can go anywhere (top of file is fine).
+- **Dark mode property overrides** must appear _after_ base rules in the CSS file. CSS variable overrides can go anywhere (top of file is fine).
 - **`mix-blend-mode`**: writing nav uses `multiply` (light mode) / `screen` (dark mode) to float over content without a background.
 
 ### Deployment

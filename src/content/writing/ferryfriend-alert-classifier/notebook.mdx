@@ -28,7 +28,7 @@ data = data[data.audit_count != 0]
 data.head()
 ```
 
->    Matplotlib is building the font cache; this may take a moment.
+> Matplotlib is building the font cache; this may take a moment.
 
 ```
    bulletinid  alert                              alert_category          audit_count
@@ -111,7 +111,8 @@ print('Train:', len(X_train.toarray()), '\n Test:', len(X_test.toarray()))
 print(X_train.shape)
 ```
 
->    Train: 1524
+> Train: 1524
+
      Test: 1017
     (1524, 9157)
 
@@ -128,7 +129,7 @@ y_test = le.transform(y_test_labels)
 le.classes_
 ```
 
->  ``` array(['high_priority_terminal', 'high_priority_vessel', 'low_priority_alert', 'normal_priority_alert', 'sailing_cancellation'], dtype='<U22') ```
+> `array(['high_priority_terminal', 'high_priority_vessel', 'low_priority_alert', 'normal_priority_alert', 'sailing_cancellation'], dtype='<U22')`
 
 ## Train and score SVM
 
@@ -143,7 +144,7 @@ score = clf.score(X_test, y_test)
 score
 ```
 
->    0.9508357915437562
+> 0.9508357915437562
 
 #### Learning curve
 
@@ -153,7 +154,6 @@ from sklearn.model_selection import LearningCurveDisplay
 
 LearningCurveDisplay.from_estimator(clf, X, y, cv=5)
 ```
-
 
 ![Learning curve](./sklearn_13_1.png)
 
@@ -166,7 +166,7 @@ scores = cross_val_score(clf, X, y, cv=5)
 print("%0.2f accuracy with a standard deviation of %0.2f" % (scores.mean(), scores.std()))
 ```
 
->    0.96 accuracy with a standard deviation of 0.02
+> 0.96 accuracy with a standard deviation of 0.02
 
 #### Confusion matrix
 
@@ -184,7 +184,7 @@ plt.xlabel('Predicted')
 plt.title('Score: ' + str(round(score, 2)))
 ```
 
->    Text(0.5, 1.0, 'Score: 0.95')
+> Text(0.5, 1.0, 'Score: 0.95')
 
 ![Confusion matrix](./sklearn_17_1.png)
 
@@ -262,4 +262,4 @@ tfidf_svm = Pipeline([('tfidf', vectorizer), ('svm', clf)])
 dump(tfidf_svm, 'out/model.joblib')
 ```
 
->    ['out/model.joblib']
+> ['out/model.joblib']

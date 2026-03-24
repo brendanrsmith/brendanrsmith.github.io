@@ -1,0 +1,96 @@
+---
+import Lab from "../../../layouts/Lab.astro";
+
+// Import will fail gracefully if data hasn't been fetched yet
+let activities: any[] = [];
+try {
+  const data = await import("../../../data/strava.json");
+  activities = data.default;
+} catch {
+  // Run: bun scripts/strava-fetch.ts
+}
+---
+
+<Lab title="Strava Routes">
+  <style>
+    body {
+      background: #0a0a0a;
+      color: #eee;
+      font-family: monospace;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #555;
+      position: fixed;
+      top: 1rem;
+      left: 2rem;
+    }
+
+    .empty {
+      color: #555;
+      font-size: 0.8rem;
+    }
+
+    .grid {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      translate: 0 -50%;
+      width: 100vw;
+      aspect-ratio: 1;
+    }
+
+    .card {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .card svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .card path {
+      fill: none;
+      stroke: #e0c4eb;
+      stroke-width: 1;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+      pointer-events: stroke;
+      transition: stroke 0.15s;
+    }
+
+    .card path:hover {
+      stroke: #fff;
+      stroke-width: 2;
+    }
+  </style>
+
+  <h1>Tracks</h1>
+
+  {
+    activities.length === 0 && (
+      <p class="empty">No data yet — run: bun scripts/strava-fetch.ts</p>
+    )
+  }
+
+  <div class="grid">
+    {
+      activities.map((a) => (
+        <div class="card">
+          <svg viewBox="0 0 1 1" xmlns="http://www.w3.org/2000/svg">
+            {a.path && <path d={a.path} />}
+          </svg>
+        </div>
+      ))
+    }
+  </div>
+</Lab>

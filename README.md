@@ -23,29 +23,31 @@ The site uses a **zone-based layout system** — independent sections with their
 
 ### Zones
 
-| Route | Zone | Design reference |
-|-------|------|-----------------|
-| `/` | Landing | Biz card |
-| `/writing` | Writing | Curve/bnjmnmddn — text-forward, big type, sidenotes |
-| `/photos` | Gallery | Vince Lo / PXP — fixed frame, image-forward *(stub)* |
-| `/lab` | Lab | Anything goes — standalone experiments |
+| Route      | Zone    | Design reference                                     |
+| ---------- | ------- | ---------------------------------------------------- |
+| `/`        | Landing | Biz card                                             |
+| `/writing` | Writing | Curve/bnjmnmddn — text-forward, big type, sidenotes  |
+| `/photos`  | Gallery | Vince Lo / PXP — fixed frame, image-forward _(stub)_ |
+| `/lab`     | Lab     | Anything goes — standalone experiments               |
 
 ### Writing content
 
 Posts live in `src/content/writing/`. Each post is an `.mdx` file (or a directory with `index.mdx` for posts with sub-pages).
 
 **Frontmatter:**
+
 ```yaml
 ---
 title: My Post
 date: "2025-01-15"
 description: Optional description for SEO.
-draft: false       # exclude from build entirely
-listed: true       # false = sub-page, hidden from index
+draft: false # exclude from build entirely
+listed: true # false = sub-page, hidden from index
 ---
 ```
 
 **Sub-pages** (appendices, notebooks, etc.) use a directory structure:
+
 ```
 src/content/writing/
   my-post/
@@ -55,6 +57,7 @@ src/content/writing/
 ```
 
 **Sidenotes** — available in `.mdx` files:
+
 ```mdx
 import Sidenote from "../../components/Sidenote.astro";
 

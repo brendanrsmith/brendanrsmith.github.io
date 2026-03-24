@@ -5,7 +5,11 @@ import Writing from "../../layouts/Writing.astro";
 export async function getStaticPaths() {
   const posts = await getCollection("writing");
   return posts.map((post) => ({
-    params: { slug: post.id.replace(/\/index\.(md|mdx)$/, "").replace(/\.(md|mdx)$/, "") },
+    params: {
+      slug: post.id
+        .replace(/\/index\.(md|mdx)$/, "")
+        .replace(/\.(md|mdx)$/, ""),
+    },
     props: { post },
   }));
 }

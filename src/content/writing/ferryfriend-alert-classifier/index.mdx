@@ -3,6 +3,7 @@ title: FerryFriend Alert Classifier
 date: "2024-06-27"
 description: Building a machine learning classifier to prioritize Washington State Ferries alerts by urgency.
 ---
+
 import Sidenote from "../../../components/Sidenote.astro";
 
 One of the main issues we encountered while improving FerryFriend's alert service was how to handle the sometimes overwhelming pace of alerts coming from the WSF system. Often, important time-sensitive schedule alerts (e.g. _"This sailing is cancelled"_) will be mixed in with numerous, lower priority alerts. The perennial example we see is _"the ADA Elevator is out of service on this vessel."_ Potentially important to some users! But probably not the same level of urgency as a cancelled sailing.
@@ -10,7 +11,10 @@ One of the main issues we encountered while improving FerryFriend's alert servic
 As we worked to surface official alerts higher in the app ui, we realized we would need some way to filter these incoming alerts by some priority metric so we could differentiate which kinds of alerts we want to push to users.
 
 <Sidenote>
-The [WSF Traveller API ↗](https://www.wsdot.wa.gov/ferries/api/schedule/documentation/rest.html) does provide an `AlertTypeID` and some flag fields, but in our experience these are... less than reliable.
+  The [WSF Traveller API
+  ↗](https://www.wsdot.wa.gov/ferries/api/schedule/documentation/rest.html) does
+  provide an `AlertTypeID` and some flag fields, but in our experience these
+  are... less than reliable.
 </Sidenote>
 
 ## Collect Training Data
@@ -34,7 +38,8 @@ In order to facilitate labelling the couple of thousand alerts we guesstimated w
 After collecting and annotating a few thousand alerts, I decided to dig into building a classifier. This process was entirely new to me. Based on a fair amount of reading through the Scikit-learn docs (and a fairer amount of trial and error), I settled on a Support Vector Machine as the likeliest candidate for building an effective model.
 
 <Sidenote>
-The full Jupyter notebook can be seen [here](/writing/ferryfriend-alert-classifier/notebook).
+  The full Jupyter notebook can be seen
+  [here](/writing/ferryfriend-alert-classifier/notebook).
 </Sidenote>
 
 ```

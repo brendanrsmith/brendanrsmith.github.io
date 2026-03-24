@@ -100,24 +100,18 @@ function normalizePath(latlng: [number, number][]): string {
   const minLng = Math.min(...lngs);
   const maxLng = Math.max(...lngs);
 
-  const width = 200;
-  const height = 200;
-  const padding = 10;
-  const innerW = width - padding * 2;
-  const innerH = height - padding * 2;
-
   const latRange = maxLat - minLat || 1;
   const lngRange = maxLng - minLng || 1;
-  const scale = Math.min(innerW / lngRange, innerH / latRange);
 
-  // Center the path
-  const offsetX = (innerW - lngRange * scale) / 2 + padding;
-  const offsetY = (innerH - latRange * scale) / 2 + padding;
+  // Normalize to 0–1, preserve aspect ratio
+  const scale = Math.min(1 / lngRange, 1 / latRange);
+  const offsetX = (1 - lngRange * scale) / 2;
+  const offsetY = (1 - latRange * scale) / 2;
 
   const points = latlng.map(([lat, lng]) => {
     const x = (lng - minLng) * scale + offsetX;
     const y = (maxLat - lat) * scale + offsetY; // flip Y axis
-    return `${x.toFixed(2)},${y.toFixed(2)}`;
+    return `${x.toFixed(4)},${y.toFixed(4)}`;
   });
 
   return `M${points.join("L")}`;
