@@ -30,5 +30,13 @@ const { title, description = "Brendan Smith — software developer" } =
   </head>
   <body>
     <slot />
+    <script>
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "k" && e.metaKey) {
+          e.preventDefault();
+          window.location.href = "/lab";
+        }
+      });
+    </script>
   </body>
 </html>
