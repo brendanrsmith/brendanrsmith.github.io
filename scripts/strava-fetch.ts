@@ -7,7 +7,10 @@
  */
 
 import { writeFileSync, mkdirSync } from "fs";
-import { join } from "path";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const BASE = "https://www.strava.com/api/v3";
 
@@ -69,7 +72,7 @@ async function fetchActivities(token: string): Promise<SummaryActivity[]> {
     throw new Error(
       `Activities fetch failed: ${res.status} ${await res.text()}`,
     );
-  return res.json();
+  return res.json() as Promise<SummaryActivity[]>;
 }
 
 async function fetchStreams(
@@ -84,7 +87,7 @@ async function fetchStreams(
     console.warn(`  Streams fetch failed for ${activityId}: ${res.status}`);
     return {};
   }
-  return res.json();
+  return res.json() as Promise<StreamSet>;
 }
 
 function normalizePath(latlng: [number, number][]): string {
@@ -151,7 +154,7 @@ async function main() {
     });
   }
 
-  const outDir = join(import.meta.dir, "../src/data");
+  const outDir = join(__dirname, "../src/data");
   mkdirSync(outDir, { recursive: true });
   const outPath = join(outDir, "strava.json");
   writeFileSync(outPath, JSON.stringify(results, null, 2));
