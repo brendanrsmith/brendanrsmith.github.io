@@ -17,8 +17,6 @@ pnpm-debug.log*
 .env
 .env.production
 
-# generated data (may contain location info)
-src/data/strava.json
 
 # macOS-specific files
 .DS_Store
