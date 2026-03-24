@@ -4,6 +4,7 @@ import Lab from "../../../layouts/Lab.astro";
 // Import will fail gracefully if data hasn't been fetched yet
 let activities: any[] = [];
 try {
+  // @ts-ignore - file is gitignored; missing file is handled by this try/catch
   const data = await import("../../../data/strava.json");
   activities = data.default;
 } catch {
