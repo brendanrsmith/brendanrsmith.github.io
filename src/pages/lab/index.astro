@@ -1,0 +1,71 @@
+---
+import Lab from "../../layouts/Lab.astro";
+
+const experiments = [
+  {
+    slug: "tracks",
+    title: "tracks",
+  },
+  {
+    slug: "tracks/all",
+    title: "last dozen",
+  },
+];
+---
+
+<Lab title="Lab">
+  <style>
+    body {
+      background: #0a0a0a;
+      color: #eee;
+      font-family: monospace;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 2rem;
+    }
+
+    ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    a {
+      color: #eee;
+      text-decoration: none;
+      font-size: 0.85rem;
+      display: flex;
+      gap: 1.5rem;
+      align-items: baseline;
+    }
+
+    a:hover {
+      color: #333;
+      background-color: #e0c4eb;
+    }
+
+    .desc {
+      color: #555;
+      font-size: 0.7rem;
+    }
+  </style>
+
+  <h1>lab</h1>
+
+  <ul>
+    {
+      experiments.map((e) => (
+        <li>
+          <a href={`/lab/${e.slug}`}>{e.title}</a>
+        </li>
+      ))
+    }
+  </ul>
+</Lab>

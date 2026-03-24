@@ -34,13 +34,4 @@
     /* Background colors */
     @apply bg-[#fff5f7] dark:bg-neutral-950;
   }
-  a {
-    /* Link colors and decoration */
-    @apply text-indigo-500 underline-offset-4 dark:text-indigo-400 hover:underline;
-  }
-  @media (prefers-contrast: more) {
-    a {
-      text-decoration: underline; /* Directly apply the style */
-    }
-  }
 }

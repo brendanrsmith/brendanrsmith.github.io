@@ -17,18 +17,20 @@ try {
       background: #0a0a0a;
       color: #eee;
       font-family: monospace;
-      height: 100vh;
+      letter-spacing: 0.05em;
       overflow: hidden;
     }
 
     h1 {
       font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
       color: #555;
       position: fixed;
-      top: 1rem;
-      left: 2rem;
+      z-index: 10;
+      padding: 2rem;
+
+      a {
+        color: #e0c4eb;
+      }
     }
 
     .empty {
@@ -39,10 +41,12 @@ try {
     .grid {
       position: absolute;
       top: 50%;
-      left: 0;
-      translate: 0 -50%;
-      width: 100vw;
+      left: 50%;
+      translate: -50% -50%;
+      min-width: 100vw;
+      min-height: 100vh;
       aspect-ratio: 1;
+      z-index: 0;
     }
 
     .card {
@@ -74,7 +78,9 @@ try {
     }
   </style>
 
-  <h1>Tracks</h1>
+  <h1>
+    <a href="/lab">LAB</a> &GT; tracks
+  </h1>
 
   {
     activities.length === 0 && (
