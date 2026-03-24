@@ -1,0 +1,101 @@
+---
+import Lab from "../../layouts/Lab.astro";
+
+// Import will fail gracefully if data hasn't been fetched yet
+let activities: any[] = [];
+try {
+  const data = await import("../../data/strava.json");
+  activities = data.default;
+} catch {
+  // Run: bun scripts/strava-fetch.ts
+}
+---
+
+<Lab title="Strava Routes">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a0a;
+      color: #eee;
+      font-family: monospace;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 2rem;
+    }
+
+    .empty {
+      color: #555;
+      font-size: 0.8rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .card svg {
+      width: 100%;
+      aspect-ratio: 1;
+      display: block;
+    }
+
+    .card path {
+      fill: none;
+      stroke: #eee;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .meta {
+      font-size: 0.65rem;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .meta .name {
+      color: #999;
+      font-size: 0.7rem;
+    }
+  </style>
+
+  <h1>Strava / {activities.length} activities</h1>
+
+  {activities.length === 0 && (
+    <p class="empty">No data yet — run: bun scripts/strava-fetch.ts</p>
+  )}
+
+  <div class="grid">
+    {activities.map((a) => (
+      <div class="card">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          {a.path ? (
+            <path d={a.path} />
+          ) : (
+            <text x="100" y="100" text-anchor="middle" fill="#333" font-size="10">no gps</text>
+          )}
+        </svg>
+        <div class="meta">
+          <div class="name">{a.name}</div>
+          <div>{a.type} &middot; {(a.distance / 1000).toFixed(1)} km</div>
+          <div>{new Date(a.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</div>
+        </div>
+      </div>
+    ))}
+  </div>
+</Lab>
