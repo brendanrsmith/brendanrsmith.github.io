@@ -51,7 +51,7 @@ const server = Bun.serve({
       }),
     });
 
-    const tokens = await res.json() as any;
+    const tokens = await res.json();
 
     console.log("Success! Update your .env with:\n");
     console.log(`STRAVA_ACCESS_TOKEN=${tokens.access_token}`);
