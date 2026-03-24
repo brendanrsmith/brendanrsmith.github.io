@@ -11,7 +11,7 @@ const { url, img, title, subTitle } = Astro.props;
 ---
 
 <div
-  class="mx-auto max-w-4xl hover:outline overflow-clip border-indigo-500/80 w-full transition-all p-3"
+  class="portfolio-card mx-auto max-w-4xl hover:outline overflow-clip border-indigo-500/80 w-full transition-all p-3"
 >
   <a
     data-astro-prefetch
@@ -31,3 +31,33 @@ const { url, img, title, subTitle } = Astro.props;
     />
   </a>
 </div>
+
+<script>
+  function hapticLight() {
+    if (navigator.vibrate) {
+      navigator.vibrate(10);
+      return;
+    }
+    // Audio fallback (iOS etc.) — brief low-freq noise burst
+    const ctx = new AudioContext();
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 0.015, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    const src = ctx.createBufferSource();
+    const filter = ctx.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.value = 180;
+    filter.Q.value = 0.5;
+    const gain = ctx.createGain();
+    gain.gain.value = 0.15;
+    src.buffer = buf;
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    src.start();
+  }
+
+  document.querySelectorAll(".portfolio-card").forEach((card) => {
+    card.addEventListener("pointerdown", hapticLight);
+  });
+</script>
