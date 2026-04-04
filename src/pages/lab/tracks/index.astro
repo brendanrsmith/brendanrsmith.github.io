@@ -9,10 +9,11 @@ try {
 } catch {
   // Run: bun scripts/strava-fetch.ts
 }
+activities = activities.filter((a) => a.path);
 ---
 
-<Lab title="Strava Routes">
-  <style>
+<Lab title="tracks">
+  <style is:global>
     body {
       background: #0a0a0a;
       color: #eee;
@@ -68,13 +69,13 @@ try {
       stroke-linejoin: round;
       vector-effect: non-scaling-stroke;
       pointer-events: stroke;
-      transition: stroke 0.15s;
     }
 
     .card path:hover {
       stroke: #fff;
       stroke-width: 2;
     }
+
   </style>
 
   <h1>
@@ -89,8 +90,8 @@ try {
 
   <div class="grid">
     {
-      activities.map((a) => (
-        <div class="card">
+      activities.map((a, i) => (
+        <div class="card" style={`--i:${i}`}>
           <svg viewBox="0 0 1 1" xmlns="http://www.w3.org/2000/svg">
             {a.path && <path d={a.path} />}
           </svg>
@@ -98,4 +99,25 @@ try {
       ))
     }
   </div>
+
+  <script is:inline>
+    // vector-effect: non-scaling-stroke causes stroke-dasharray to operate in screen
+    // pixels, so we compute path length in screen pixels = user-unit length * SVG size.
+    var svgSize = Math.max(window.innerWidth, window.innerHeight);
+    document.querySelectorAll('.card path').forEach(function(p) {
+      var len = p.getTotalLength() * svgSize;
+      p.style.strokeDasharray = String(len);
+      p.style.strokeDashoffset = String(len);
+    });
+  </script>
+
+  <script>
+    var svgSize = Math.max(window.innerWidth, window.innerHeight);
+    document.querySelectorAll<SVGPathElement>('.card path').forEach((path, i) => {
+      setTimeout(() => {
+        path.style.transition = 'stroke-dashoffset 2s ease';
+        path.style.strokeDashoffset = '0';
+      }, 100 + i * 150);
+    });
+  </script>
 </Lab>
