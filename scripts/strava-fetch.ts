@@ -15,7 +15,6 @@ const CATEGORIES: Record<string, string[]> = {
   run: ["Run", "TrailRun"],
 };
 
-const ALL_SPORT_TYPES = new Set(Object.values(CATEGORIES).flat());
 
 import { writeFileSync, mkdirSync } from "fs";
 import { join, dirname } from "path";
