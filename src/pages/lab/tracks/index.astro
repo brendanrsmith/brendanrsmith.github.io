@@ -12,6 +12,18 @@ try {
 activities = activities.filter((a) => a.path);
 
 const categories = ["ski", "bike", "run"];
+
+function fmtDistance(m: number) {
+  return (m / 1000).toFixed(1) + " km";
+}
+function fmtTime(s: number) {
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  return h > 0 ? `${h}h ${m}m` : `${m}m`;
+}
+function fmtDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
 ---
 
 <Lab title="tracks">
@@ -87,11 +99,15 @@ const categories = ["ski", "bike", "run"];
       position: absolute;
       inset: 0;
       pointer-events: none;
-      transition: opacity 0.4s ease;
+      visibility: hidden;
     }
 
     .card.hidden {
       opacity: 0;
+      pointer-events: none;
+    }
+
+    .card.hidden path {
       pointer-events: none;
     }
 
@@ -109,11 +125,44 @@ const categories = ["ski", "bike", "run"];
       stroke-linejoin: round;
       vector-effect: non-scaling-stroke;
       pointer-events: stroke;
+      cursor: pointer;
     }
 
-    .card path:hover {
+    .card path:hover,
+    .card.active path {
       stroke: #fff;
       stroke-width: 2;
+    }
+
+    .tooltip {
+      position: fixed;
+      z-index: 20;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      background: #111;
+      border: 1px solid #333;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.7rem;
+      line-height: 1.8;
+      white-space: nowrap;
+    }
+
+    .tooltip.visible {
+      opacity: 1;
+    }
+
+    .tooltip-name {
+      color: #eee;
+      margin-bottom: 0.2rem;
+    }
+
+    .tooltip-meta {
+      color: #555;
+    }
+
+    .tooltip-meta span {
+      color: #999;
     }
   </style>
 
@@ -130,7 +179,16 @@ const categories = ["ski", "bike", "run"];
   <div class="grid">
     {
       activities.map((a, i) => (
-        <div class="card" data-category={a.category} style={`--i:${i}`}>
+        <div
+          class="card"
+          data-category={a.category}
+          data-name={a.name}
+          data-date={fmtDate(a.date)}
+          data-distance={fmtDistance(a.distance)}
+          data-time={fmtTime(a.moving_time)}
+          data-elevation={a.elevation_gain + " m"}
+          style={`--i:${i}`}
+        >
           <svg viewBox="0 0 1 1" xmlns="http://www.w3.org/2000/svg">
             {a.path && <path d={a.path} />}
           </svg>
@@ -145,39 +203,107 @@ const categories = ["ski", "bike", "run"];
     ))}
   </nav>
 
-  <script is:inline>
-    var svgSize = Math.max(window.innerWidth, window.innerHeight);
-    document.querySelectorAll('.card path').forEach(function(p) {
-      var len = p.getTotalLength() * svgSize;
-      p.style.strokeDasharray = String(len);
-      p.style.strokeDashoffset = String(len);
-    });
-  </script>
+  <div class="tooltip" id="tooltip">
+    <div class="tooltip-name" id="tooltip-name"></div>
+    <div class="tooltip-meta">date&nbsp;&nbsp;&nbsp; <span id="tooltip-date"></span></div>
+    <div class="tooltip-meta">dist&nbsp;&nbsp;&nbsp; <span id="tooltip-dist"></span></div>
+    <div class="tooltip-meta">time&nbsp;&nbsp;&nbsp; <span id="tooltip-time"></span></div>
+    <div class="tooltip-meta">elev&nbsp;&nbsp;&nbsp; <span id="tooltip-elev"></span></div>
+  </div>
 
   <script>
     const svgSize = Math.max(window.innerWidth, window.innerHeight);
-    const cards = document.querySelectorAll<HTMLElement>('.card');
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('.card'));
     const buttons = document.querySelectorAll<HTMLButtonElement>('.toggle button');
+    const tooltip = document.getElementById('tooltip')!;
 
-    // Draw-in animation on load
-    cards.forEach((card, i) => {
+    // Pre-compute dasharray for all paths, then reveal cards.
+    cards.forEach((card) => {
       const path = card.querySelector<SVGPathElement>('path');
       if (!path) return;
-      setTimeout(() => {
-        path.style.transition = 'stroke-dashoffset 2s ease';
-        path.style.strokeDashoffset = '0';
-      }, 100 + i * 150);
+      const len = path.getTotalLength() * svgSize;
+      path.style.strokeDasharray = String(len);
+      path.style.strokeDashoffset = String(len);
+      card.style.visibility = 'visible';
     });
 
-    // Toggle filter
+    let pendingTimers: ReturnType<typeof setTimeout>[] = [];
+
+    function animateVisible() {
+      pendingTimers.forEach(clearTimeout);
+      pendingTimers = [];
+
+      const visible = cards.filter((c) => !c.classList.contains('hidden'));
+      visible.forEach((card, i) => {
+        const path = card.querySelector<SVGPathElement>('path');
+        if (!path) return;
+        path.style.transition = 'none';
+        path.style.strokeDashoffset = path.style.strokeDasharray;
+        const t = setTimeout(() => {
+          path.style.transition = 'stroke-dashoffset 1.5s ease';
+          path.style.strokeDashoffset = '0';
+        }, i * 60);
+        pendingTimers.push(t);
+      });
+    }
+
+    animateVisible();
+
+    // Tooltip
+    let activeCard: HTMLElement | null = null;
+
+    function showTooltip(card: HTMLElement, x: number, y: number) {
+      document.getElementById('tooltip-name')!.textContent = card.dataset.name ?? '';
+      document.getElementById('tooltip-date')!.textContent = card.dataset.date ?? '';
+      document.getElementById('tooltip-dist')!.textContent = card.dataset.distance ?? '';
+      document.getElementById('tooltip-time')!.textContent = card.dataset.time ?? '';
+      document.getElementById('tooltip-elev')!.textContent = card.dataset.elevation ?? '';
+      positionTooltip(x, y);
+      tooltip.classList.add('visible');
+    }
+
+    function positionTooltip(x: number, y: number) {
+      const pad = 12;
+      const tw = tooltip.offsetWidth;
+      const th = tooltip.offsetHeight;
+      const left = x + pad + tw > window.innerWidth ? x - tw - pad : x + pad;
+      const top  = y + pad + th > window.innerHeight ? y - th - pad : y + pad;
+      tooltip.style.left = left + 'px';
+      tooltip.style.top  = top  + 'px';
+    }
+
+    function hideTooltip() {
+      tooltip.classList.remove('visible');
+      activeCard?.classList.remove('active');
+      activeCard = null;
+    }
+
+    cards.forEach((card) => {
+      card.querySelector('path')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (activeCard === card) {
+          hideTooltip();
+          return;
+        }
+        activeCard?.classList.remove('active');
+        activeCard = card;
+        card.classList.add('active');
+        showTooltip(card, (e as MouseEvent).clientX, (e as MouseEvent).clientY);
+      });
+    });
+
+    document.addEventListener('click', hideTooltip);
+
+    // Filter toggle
     let active: string | null = null;
 
     buttons.forEach((btn) => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        hideTooltip();
         const cat = btn.dataset.cat!;
 
         if (active === cat) {
-          // Deselect — show all
           active = null;
           buttons.forEach((b) => b.classList.remove('active'));
           cards.forEach((c) => c.classList.remove('hidden'));
@@ -188,6 +314,8 @@ const categories = ["ski", "bike", "run"];
             c.classList.toggle('hidden', c.dataset.category !== cat);
           });
         }
+
+        animateVisible();
       });
     });
   </script>

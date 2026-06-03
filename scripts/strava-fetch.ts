@@ -10,7 +10,7 @@
 const TARGET_PER_CATEGORY = 20;
 
 const CATEGORIES: Record<string, string[]> = {
-  ski: ["BackcountrySki", "AlpineSki", "NordicSki"],
+  ski: ["BackcountrySki", "NordicSki"],
   bike: ["Ride", "MountainBikeRide", "GravelRide"],
   run: ["Run", "TrailRun"],
 };
