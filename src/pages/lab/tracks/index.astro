@@ -10,6 +10,8 @@ try {
   // Run: bun scripts/strava-fetch.ts
 }
 activities = activities.filter((a) => a.path);
+
+const categories = ["ski", "bike", "run"];
 ---
 
 <Lab title="tracks">
@@ -34,6 +36,38 @@ activities = activities.filter((a) => a.path);
       }
     }
 
+    .toggle {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      translate: -50% 0;
+      z-index: 10;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .toggle button {
+      background: none;
+      border: 1px solid #333;
+      color: #555;
+      font-family: monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      padding: 0.35rem 0.75rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .toggle button:hover {
+      color: #eee;
+      border-color: #666;
+    }
+
+    .toggle button.active {
+      color: #e0c4eb;
+      border-color: #e0c4eb;
+    }
+
     .empty {
       color: #555;
       font-size: 0.8rem;
@@ -52,6 +86,12 @@ activities = activities.filter((a) => a.path);
     .card {
       position: absolute;
       inset: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .card.hidden {
+      opacity: 0;
       pointer-events: none;
     }
 
@@ -75,7 +115,6 @@ activities = activities.filter((a) => a.path);
       stroke: #fff;
       stroke-width: 2;
     }
-
   </style>
 
   <h1>
@@ -91,7 +130,7 @@ activities = activities.filter((a) => a.path);
   <div class="grid">
     {
       activities.map((a, i) => (
-        <div class="card" style={`--i:${i}`}>
+        <div class="card" data-category={a.category} style={`--i:${i}`}>
           <svg viewBox="0 0 1 1" xmlns="http://www.w3.org/2000/svg">
             {a.path && <path d={a.path} />}
           </svg>
@@ -100,9 +139,13 @@ activities = activities.filter((a) => a.path);
     }
   </div>
 
+  <nav class="toggle">
+    {categories.map((cat) => (
+      <button data-cat={cat}>{cat}</button>
+    ))}
+  </nav>
+
   <script is:inline>
-    // vector-effect: non-scaling-stroke causes stroke-dasharray to operate in screen
-    // pixels, so we compute path length in screen pixels = user-unit length * SVG size.
     var svgSize = Math.max(window.innerWidth, window.innerHeight);
     document.querySelectorAll('.card path').forEach(function(p) {
       var len = p.getTotalLength() * svgSize;
@@ -112,12 +155,40 @@ activities = activities.filter((a) => a.path);
   </script>
 
   <script>
-    var svgSize = Math.max(window.innerWidth, window.innerHeight);
-    document.querySelectorAll<SVGPathElement>('.card path').forEach((path, i) => {
+    const svgSize = Math.max(window.innerWidth, window.innerHeight);
+    const cards = document.querySelectorAll<HTMLElement>('.card');
+    const buttons = document.querySelectorAll<HTMLButtonElement>('.toggle button');
+
+    // Draw-in animation on load
+    cards.forEach((card, i) => {
+      const path = card.querySelector<SVGPathElement>('path');
+      if (!path) return;
       setTimeout(() => {
         path.style.transition = 'stroke-dashoffset 2s ease';
         path.style.strokeDashoffset = '0';
       }, 100 + i * 150);
+    });
+
+    // Toggle filter
+    let active: string | null = null;
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const cat = btn.dataset.cat!;
+
+        if (active === cat) {
+          // Deselect — show all
+          active = null;
+          buttons.forEach((b) => b.classList.remove('active'));
+          cards.forEach((c) => c.classList.remove('hidden'));
+        } else {
+          active = cat;
+          buttons.forEach((b) => b.classList.toggle('active', b.dataset.cat === cat));
+          cards.forEach((c) => {
+            c.classList.toggle('hidden', c.dataset.category !== cat);
+          });
+        }
+      });
     });
   </script>
 </Lab>

@@ -1,10 +1,21 @@
 #!/usr/bin/env bun
 /**
- * Fetches 12 most recent Strava activities + their latlng streams.
+ * Fetches recent Strava activities across ski/bike/run categories.
+ * Paginates until it finds enough of each type or exhausts the feed.
  * Writes output to src/data/strava.json.
  *
  * Usage: bun scripts/strava-fetch.ts
  */
+
+const TARGET_PER_CATEGORY = 20;
+
+const CATEGORIES: Record<string, string[]> = {
+  ski: ["BackcountrySki", "AlpineSki", "NordicSki"],
+  bike: ["Ride", "MountainBikeRide", "GravelRide"],
+  run: ["Run", "TrailRun"],
+};
+
+const ALL_SPORT_TYPES = new Set(Object.values(CATEGORIES).flat());
 
 import { writeFileSync, mkdirSync } from "fs";
 import { join, dirname } from "path";
@@ -41,7 +52,7 @@ async function refreshTokens(): Promise<string> {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      client_id: process.env.STRAVA_CLIENT_ID,
+      client_id: parseInt(process.env.STRAVA_CLIENT_ID!, 10),
       client_secret: process.env.STRAVA_CLIENT_SECRET,
       refresh_token: process.env.STRAVA_REFRESH_TOKEN,
       grant_type: "refresh_token",
@@ -59,20 +70,53 @@ async function refreshTokens(): Promise<string> {
 }
 
 async function getAccessToken(): Promise<string> {
-  // Check if current token is still valid (Strava tokens expire after 6 hours)
-  // We always refresh to keep things simple
   return await refreshTokens();
 }
 
-async function fetchActivities(token: string): Promise<SummaryActivity[]> {
-  const res = await fetch(`${BASE}/athlete/activities?per_page=12&page=1`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok)
-    throw new Error(
-      `Activities fetch failed: ${res.status} ${await res.text()}`,
+function categoryFor(sportType: string): string | null {
+  for (const [cat, types] of Object.entries(CATEGORIES)) {
+    if (types.includes(sportType)) return cat;
+  }
+  return null;
+}
+
+async function fetchActivitiesByCategory(
+  token: string,
+): Promise<(SummaryActivity & { category: string })[]> {
+  const counts: Record<string, number> = { ski: 0, bike: 0, run: 0 };
+  const results: (SummaryActivity & { category: string })[] = [];
+  let page = 1;
+
+  while (Object.values(counts).some((n) => n < TARGET_PER_CATEGORY)) {
+    const res = await fetch(
+      `${BASE}/athlete/activities?per_page=50&page=${page}`,
+      { headers: { Authorization: `Bearer ${token}` } },
     );
-  return res.json() as Promise<SummaryActivity[]>;
+    if (!res.ok)
+      throw new Error(
+        `Activities fetch failed: ${res.status} ${await res.text()}`,
+      );
+
+    const batch = (await res.json()) as SummaryActivity[];
+    if (batch.length === 0) break;
+
+    let added = 0;
+    for (const a of batch) {
+      const cat = categoryFor(a.sport_type);
+      if (cat && counts[cat] < TARGET_PER_CATEGORY) {
+        results.push({ ...a, category: cat });
+        counts[cat]++;
+        added++;
+      }
+    }
+
+    console.log(
+      `  Page ${page}: ${batch.length} activities, ${added} kept — ski:${counts.ski} bike:${counts.bike} run:${counts.run}`,
+    );
+    page++;
+  }
+
+  return results;
 }
 
 async function fetchStreams(
@@ -103,7 +147,6 @@ function normalizePath(latlng: [number, number][]): string {
   const latRange = maxLat - minLat || 1;
   const lngRange = maxLng - minLng || 1;
 
-  // Normalize to 0–1, preserve aspect ratio
   const scale = Math.min(1 / lngRange, 1 / latRange);
   const offsetX = (1 - lngRange * scale) / 2;
   const offsetY = (1 - latRange * scale) / 2;
@@ -121,8 +164,8 @@ async function main() {
   console.log("Fetching Strava data...");
 
   const token = await getAccessToken();
-  const activities = await fetchActivities(token);
-  console.log(`Got ${activities.length} activities`);
+  const activities = await fetchActivitiesByCategory(token);
+  console.log(`Got ${activities.length} total activities`);
 
   const results = [];
 
@@ -139,12 +182,13 @@ async function main() {
       id: activity.id,
       name: activity.name,
       type: activity.sport_type,
+      category: activity.category,
       date: activity.start_date,
       distance: activity.distance,
       moving_time: activity.moving_time,
       elevation_gain: activity.total_elevation_gain,
       point_count: latlng.length,
-      path, // normalized SVG path string, 200x200 viewport
+      path,
     });
   }
 
