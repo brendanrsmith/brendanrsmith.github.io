@@ -1,0 +1,731 @@
+---
+import Lab from "../../layouts/Lab.astro";
+---
+
+<Lab title="chain">
+  <style is:global>
+    body {
+      background: #0a0a0a;
+      color: #eee;
+      font-family: monospace;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 2rem;
+    }
+
+    h1 a {
+      color: #e0c4eb;
+      text-decoration: none;
+    }
+
+    .info-wrap {
+      display: inline-block;
+      position: relative;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    .info-btn {
+      background: none;
+      border: none;
+      color: #333;
+      font-family: monospace;
+      font-size: 0.7rem;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .info-btn:hover { color: #888; }
+
+    .info-popover {
+      position: absolute;
+      top: 1.4rem;
+      left: 0;
+      background: #111;
+      border: 1px solid #222;
+      color: #888;
+      font-size: 0.68rem;
+      line-height: 1.6;
+      padding: 0.75rem 1rem;
+      width: 280px;
+      z-index: 20;
+      display: none;
+    }
+
+    .info-popover.open { display: block; }
+
+    /* layout */
+    .layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 3rem;
+      align-items: start;
+      max-width: 960px;
+    }
+
+    @media (max-width: 680px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    /* chain column */
+    .input-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #333;
+      color: #eee;
+      font-family: monospace;
+      font-size: 0.85rem;
+      padding: 0.25rem 0;
+      width: 240px;
+      outline: none;
+    }
+
+    input::placeholder { color: #444; }
+
+    .suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: #111;
+      border: 1px solid #222;
+      width: 100%;
+      z-index: 10;
+    }
+
+    .suggestions button {
+      display: block;
+      width: 100%;
+      background: none;
+      border: none;
+      color: #aaa;
+      font-family: monospace;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.6rem;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .suggestions button:hover,
+    .suggestions button.active {
+      background: #1a1a1a;
+      color: #eee;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      min-height: 1rem;
+    }
+
+    #status {
+      font-size: 0.7rem;
+      color: #555;
+      flex: 1;
+    }
+
+    #depth {
+      font-size: 0.65rem;
+      color: #2a2a2a;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #depth.nonzero { color: #444; }
+
+    #chain {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      max-height: 70vh;
+      overflow-y: auto;
+      scrollbar-width: none;
+      padding-left: 0.5rem;
+    }
+
+    #chain::-webkit-scrollbar { display: none; }
+
+    .node {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      padding: 0 0 0 1rem;
+      border-left: 1px solid #1e1e1e;
+      position: relative;
+    }
+
+    .node::before {
+      content: "●";
+      position: absolute;
+      left: -0.42em;
+      top: 0;
+      font-size: 0.55rem;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .node.current::before { color: #e0c4eb; }
+
+    .node-handle {
+      font-size: 0.82rem;
+      color: #ccc;
+    }
+
+    .node-handle a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .node-handle a:hover { color: #eee; }
+
+    .node-via {
+      font-size: 0.68rem;
+      color: #444;
+    }
+
+    .node-via a { color: inherit; }
+    .node-via a:hover { color: #888; }
+
+    .node-meta {
+      font-size: 0.62rem;
+      color: #2a2a2a;
+      margin-bottom: 1.2rem;
+    }
+
+    .node.current .node-handle { color: #eee; }
+    .node.current .node-via { color: #555; }
+
+    /* post panel */
+    #post-panel {
+      position: sticky;
+      top: 2rem;
+    }
+
+    .post-author {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .post-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .post-avatar-placeholder {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #1a1a1a;
+      flex-shrink: 0;
+    }
+
+    .post-author-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .post-display-name {
+      font-size: 0.8rem;
+      color: #eee;
+    }
+
+    .post-handle {
+      font-size: 0.68rem;
+      color: #444;
+    }
+
+    .post-text {
+      font-size: 0.8rem;
+      color: #ccc;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-bottom: 1rem;
+    }
+
+    .post-images {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .post-images img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: contain;
+      background: #111;
+      display: block;
+      border-radius: 2px;
+    }
+
+    .post-external {
+      border: 1px solid #1e1e1e;
+      padding: 0.6rem 0.75rem;
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .post-external-thumb {
+      width: 100%;
+      max-height: 140px;
+      object-fit: contain;
+      background: #111;
+      margin-bottom: 0.4rem;
+    }
+
+    .post-external-title {
+      font-size: 0.72rem;
+      color: #aaa;
+    }
+
+    .post-external-url {
+      font-size: 0.62rem;
+      color: #444;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .post-quote {
+      border-left: 1px solid #222;
+      padding-left: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .post-quote-handle {
+      font-size: 0.68rem;
+      color: #555;
+      margin-bottom: 0.3rem;
+    }
+
+    .post-quote-text {
+      font-size: 0.72rem;
+      color: #555;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .post-link {
+      font-size: 0.65rem;
+      color: #333;
+      text-decoration: none;
+    }
+
+    .post-link:hover { color: #888; }
+
+    .post-empty {
+      font-size: 0.72rem;
+      color: #2a2a2a;
+    }
+  </style>
+
+  <h1><a href="/lab">lab</a> &gt; chain</h1>
+
+  <div class="layout">
+    <div class="chain-col">
+      <div class="input-wrap">
+        <input id="handle" type="text" placeholder="seed handle" autocomplete="off" autocapitalize="off" spellcheck="false" />
+        <div class="suggestions" id="suggestions" hidden></div>
+        <span class="info-wrap">
+          <button class="info-btn" id="info-btn">?</button>
+          <div class="info-popover" id="info-popover">
+            watch for likes, reposts, and posts from the current seed's follows → first event extracts the target post's author → resolves to a handle → that author becomes the new seed
+          </div>
+        </span>
+      </div>
+      <div class="status-row">
+        <div id="status"></div>
+        <div id="depth"></div>
+      </div>
+      <div id="chain"></div>
+    </div>
+    <div class="post-col">
+      <div id="post-panel"><p class="post-empty">—</p></div>
+    </div>
+  </div>
+
+  <script>
+    const API = "https://public.api.bsky.app/xrpc";
+    const JETSTREAM = "wss://jetstream2.us-east.bsky.network/subscribe";
+    const MAX_FOLLOWS = 500;
+    const MIN_FOLLOWS = 10;
+
+    async function xrpc(method, params = {}) {
+      const url = new URL(`${API}/${method}`);
+      for (const [k, v] of Object.entries(params)) {
+        if (v != null) url.searchParams.set(k, v);
+      }
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`${res.status}`);
+      return res.json();
+    }
+
+    function didFromUri(uri) {
+      const m = uri?.match(/^at:\/\/(did:[^/]+)\//);
+      return m ? m[1] : null;
+    }
+
+    function postUrlFromUri(uri) {
+      return uri?.replace(/^at:\/\/(did:[^/]+)\/app\.bsky\.feed\.post\/(.+)$/, "https://bsky.app/profile/$1/post/$2") ?? "#";
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // --- info popover ---
+    const infoBtn = document.getElementById("info-btn");
+    const infoPopover = document.getElementById("info-popover");
+    infoBtn.addEventListener("click", (e) => { e.stopPropagation(); infoPopover.classList.toggle("open"); });
+    document.addEventListener("click", () => infoPopover.classList.remove("open"));
+
+    // --- elements ---
+    const input = document.getElementById("handle");
+    const suggestionsEl = document.getElementById("suggestions");
+    const statusEl = document.getElementById("status");
+    const depthEl = document.getElementById("depth");
+    const chainEl = document.getElementById("chain");
+    const postPanel = document.getElementById("post-panel");
+
+    let debounceTimer, activeIdx = -1;
+    let ws = null;
+    let profiles = {};
+    let running = false;
+    let hopping = false;
+    let depth = 0;
+
+    // --- typeahead ---
+    input.addEventListener("input", () => {
+      clearTimeout(debounceTimer);
+      const q = input.value.trim().replace(/^@/, "");
+      if (q.length < 2) { hideSuggestions(); return; }
+      debounceTimer = setTimeout(() => fetchSuggestions(q), 200);
+    });
+
+    input.addEventListener("keydown", (e) => {
+      const btns = suggestionsEl.querySelectorAll("button");
+      if (e.key === "ArrowDown") { e.preventDefault(); activeIdx = Math.min(activeIdx + 1, btns.length - 1); updateActive(btns); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); activeIdx = Math.max(activeIdx - 1, -1); updateActive(btns); }
+      else if (e.key === "Enter") {
+        e.preventDefault();
+        if (activeIdx >= 0 && btns[activeIdx]) btns[activeIdx].click();
+        else start(input.value.trim().replace(/^@/, ""));
+      } else if (e.key === "Escape") hideSuggestions();
+    });
+
+    function updateActive(btns) { btns.forEach((b, i) => b.classList.toggle("active", i === activeIdx)); }
+
+    async function fetchSuggestions(q) {
+      try {
+        const { actors } = await xrpc("app.bsky.actor.searchActorsTypeahead", { q, limit: 6 });
+        if (!actors.length) { hideSuggestions(); return; }
+        suggestionsEl.innerHTML = "";
+        activeIdx = -1;
+        for (const actor of actors) {
+          const btn = document.createElement("button");
+          btn.textContent = actor.handle;
+          btn.addEventListener("click", () => { input.value = actor.handle; hideSuggestions(); start(actor.handle); });
+          suggestionsEl.appendChild(btn);
+        }
+        suggestionsEl.hidden = false;
+      } catch {}
+    }
+
+    function hideSuggestions() { suggestionsEl.hidden = true; suggestionsEl.innerHTML = ""; activeIdx = -1; }
+    document.addEventListener("click", (e) => { if (!e.target.closest(".input-wrap")) hideSuggestions(); });
+
+    // --- chain ---
+    async function start(actor) {
+      hideSuggestions();
+      stop();
+      chainEl.innerHTML = "";
+      postPanel.innerHTML = `<p class="post-empty">—</p>`;
+      depth = 0;
+      setDepth(0);
+      running = true;
+      await hop(actor, null, null, null);
+    }
+
+    function stop() {
+      running = false;
+      hopping = false;
+      if (ws) { ws.close(); ws = null; }
+      profiles = {};
+    }
+
+    async function hop(actor, viaText, likedUri, post) {
+      if (!running) return;
+      hopping = true;
+
+      chainEl.querySelectorAll(".node.current").forEach(n => n.classList.remove("current"));
+      setDepth(depth++);
+
+      // chain node
+      const node = document.createElement("div");
+      node.className = "node current";
+
+      const handleEl = document.createElement("div");
+      handleEl.className = "node-handle";
+      handleEl.innerHTML = `<a href="https://bsky.app/profile/${encodeURIComponent(actor)}" target="_blank" rel="noopener">@${escapeHtml(actor)}</a>`;
+      node.appendChild(handleEl);
+
+      if (viaText && likedUri) {
+        const viaEl = document.createElement("div");
+        viaEl.className = "node-via";
+        viaEl.innerHTML = `${escapeHtml(viaText)} · <a href="${postUrlFromUri(likedUri)}" target="_blank" rel="noopener">↗</a>`;
+        node.appendChild(viaEl);
+      }
+
+      const metaEl = document.createElement("div");
+      metaEl.className = "node-meta";
+      metaEl.textContent = new Date().toISOString().slice(11, 19) + " UTC";
+      node.appendChild(metaEl);
+
+      chainEl.appendChild(node);
+      node.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+      // update post panel
+      if (post) renderPost(post, likedUri);
+
+      // fetch follows
+      setStatus(`fetching follows for @${actor}…`);
+      try {
+        profiles = await fetchFollows(actor);
+      } catch {
+        setStatus(`could not fetch follows for @${actor}`);
+        running = false;
+        return;
+      }
+
+      const count = Object.keys(profiles).length;
+      if (count === 0) {
+        setStatus(`@${actor} has no follows — chain ends`);
+        running = false;
+        return;
+      }
+
+      if (!running) return;
+
+      if (ws) { ws.close(); ws = null; }
+      const url = new URL(JETSTREAM);
+      for (const col of ["app.bsky.feed.like", "app.bsky.feed.repost", "app.bsky.feed.post"]) {
+        url.searchParams.append("wantedCollections", col);
+      }
+      ws = new WebSocket(url);
+
+      ws.addEventListener("open", () => {
+        if (!running) { ws.close(); return; }
+        hopping = false;
+        setStatus(`watching @${actor}'s ${count} follows`);
+      });
+
+      ws.addEventListener("close", (e) => { if (running) setStatus(`disconnected (code ${e.code})`); });
+
+      ws.addEventListener("message", async (e) => {
+        if (!running || hopping) return;
+        try {
+          const evt = JSON.parse(e.data);
+          if (evt.kind !== "commit" || evt.commit?.operation !== "create") return;
+          if (!profiles[evt.did]) return;
+
+          const col = evt.commit.collection;
+          let targetDid, targetUri, verb;
+
+          if (col === "app.bsky.feed.like" || col === "app.bsky.feed.repost") {
+            targetUri = evt.commit.record?.subject?.uri;
+            if (!targetUri) return;
+            targetDid = didFromUri(targetUri);
+            if (!targetDid) return;
+            verb = col === "app.bsky.feed.like" ? "liked" : "reposted";
+          } else if (col === "app.bsky.feed.post") {
+            targetDid = evt.did;
+            targetUri = `at://${evt.did}/app.bsky.feed.post/${evt.commit.rkey}`;
+            verb = "posted";
+          } else {
+            return;
+          }
+
+          hopping = true;
+          const actorHandle = profiles[evt.did];
+          setStatus(`@${actorHandle} ${verb} — resolving…`);
+
+          const [profileRes, postsRes] = await Promise.allSettled([
+            xrpc("app.bsky.actor.getProfile", { actor: targetDid }),
+            xrpc("app.bsky.feed.getPosts", { uris: targetUri }),
+          ]);
+
+          if (profileRes.status !== "fulfilled") { hopping = false; return; }
+          const profile = profileRes.value;
+          const followsCount = profile.followsCount ?? 0;
+
+          if (followsCount < MIN_FOLLOWS) {
+            setStatus(`skipping @${profile.handle} (${followsCount} follows) — waiting…`);
+            hopping = false;
+            return;
+          }
+
+          const post = postsRes.status === "fulfilled" ? postsRes.value.posts?.[0] : null;
+          const viaText = col === "app.bsky.feed.post" ? "posted" : `${verb} by @${actorHandle}`;
+          await hop(profile.handle, viaText, targetUri, post);
+        } catch {}
+      });
+    }
+
+    // --- post panel renderer ---
+
+    function renderPost(post, uri) {
+      postPanel.innerHTML = "";
+
+      // author
+      const authorEl = document.createElement("div");
+      authorEl.className = "post-author";
+      if (post.author?.avatar) {
+        authorEl.innerHTML = `<img class="post-avatar" src="${escapeHtml(post.author.avatar)}" alt="" />`;
+      } else {
+        authorEl.innerHTML = `<div class="post-avatar-placeholder"></div>`;
+      }
+      const metaEl = document.createElement("div");
+      metaEl.className = "post-author-meta";
+      metaEl.innerHTML = `
+        <span class="post-display-name">${escapeHtml(post.author?.displayName || post.author?.handle || "")}</span>
+        <span class="post-handle">@${escapeHtml(post.author?.handle || "")}</span>
+      `;
+      authorEl.appendChild(metaEl);
+      postPanel.appendChild(authorEl);
+
+      // text
+      const text = post.record?.text?.trim();
+      if (text) {
+        const textEl = document.createElement("div");
+        textEl.className = "post-text";
+        textEl.textContent = text;
+        postPanel.appendChild(textEl);
+      }
+
+      // embed
+      const embed = post.embed;
+      if (embed) renderEmbed(embed, postPanel);
+
+      // link to post
+      if (uri) {
+        const linkEl = document.createElement("a");
+        linkEl.className = "post-link";
+        linkEl.href = postUrlFromUri(uri);
+        linkEl.target = "_blank";
+        linkEl.rel = "noopener";
+        linkEl.textContent = "view on bsky.app ↗";
+        postPanel.appendChild(linkEl);
+      }
+    }
+
+    function renderEmbed(embed, container) {
+      const type = embed.$type;
+
+      if (type === "app.bsky.embed.images#view" && embed.images?.length) {
+        const grid = document.createElement("div");
+        grid.className = "post-images";
+        for (const img of embed.images) {
+          const el = document.createElement("img");
+          el.src = img.thumb;
+          el.alt = img.alt || "";
+          grid.appendChild(el);
+        }
+        container.appendChild(grid);
+      }
+
+      else if (type === "app.bsky.embed.external#view" && embed.external) {
+        const ext = embed.external;
+        const el = document.createElement("div");
+        el.className = "post-external";
+        if (ext.thumb) {
+          const thumb = document.createElement("img");
+          thumb.className = "post-external-thumb";
+          thumb.src = ext.thumb;
+          thumb.alt = "";
+          el.appendChild(thumb);
+        }
+        if (ext.title) {
+          const title = document.createElement("div");
+          title.className = "post-external-title";
+          title.textContent = ext.title;
+          el.appendChild(title);
+        }
+        const urlEl = document.createElement("div");
+        urlEl.className = "post-external-url";
+        urlEl.textContent = ext.uri;
+        el.appendChild(urlEl);
+        container.appendChild(el);
+      }
+
+      else if (type === "app.bsky.embed.record#view" && embed.record) {
+        renderQuote(embed.record, container);
+      }
+
+      else if (type === "app.bsky.embed.recordWithMedia#view") {
+        if (embed.media) renderEmbed(embed.media, container);
+        if (embed.record?.record) renderQuote(embed.record.record, container);
+      }
+    }
+
+    function renderQuote(record, container) {
+      if (!record.value && !record.record) return;
+      const inner = record.value ?? record.record;
+      const author = record.author;
+      const el = document.createElement("div");
+      el.className = "post-quote";
+      if (author) {
+        const handleEl = document.createElement("div");
+        handleEl.className = "post-quote-handle";
+        handleEl.textContent = `@${author.handle}`;
+        el.appendChild(handleEl);
+      }
+      if (inner?.text) {
+        const textEl = document.createElement("div");
+        textEl.className = "post-quote-text";
+        textEl.textContent = inner.text;
+        el.appendChild(textEl);
+      }
+      container.appendChild(el);
+    }
+
+    async function fetchFollows(actor) {
+      const result = {};
+      let cursor;
+      do {
+        const res = await xrpc("app.bsky.graph.getFollows", { actor, limit: 100, cursor });
+        for (const f of res.follows) result[f.did] = f.handle;
+        cursor = res.cursor;
+      } while (cursor && Object.keys(result).length < MAX_FOLLOWS);
+      return result;
+    }
+
+    function setStatus(msg) { statusEl.textContent = msg; }
+
+    function setDepth(n) {
+      depthEl.textContent = n > 1 ? `${n} hops` : "";
+      depthEl.classList.toggle("nonzero", n > 0);
+    }
+  </script>
+</Lab>
