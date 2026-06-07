@@ -331,9 +331,10 @@ import Lab from "../../layouts/Lab.astro";
       ws = new WebSocket(url);
 
       ws.addEventListener("open", () => { setStatus(`live — watching ${didSet.size} accounts`); startBandwidth(); });
-      ws.addEventListener("close", () => {
+      ws.addEventListener("close", (e) => {
         stopBandwidth();
-        statusEl.innerHTML = `disconnected — <button id="reconnect">reconnect?</button>`;
+        const detail = e.reason ? `${e.code}: ${e.reason}` : `code ${e.code}`;
+        statusEl.innerHTML = `disconnected (${detail}) — <button id="reconnect">reconnect?</button>`;
         document.getElementById("reconnect").addEventListener("click", () => start(currentActor));
       });
       ws.addEventListener("error", () => { stopBandwidth(); setStatus("connection error"); });

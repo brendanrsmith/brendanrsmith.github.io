@@ -1,0 +1,399 @@
+---
+import Lab from "../../layouts/Lab.astro";
+---
+
+<Lab title="cacophony">
+  <style is:global>
+    body {
+      background: #0a0a0a;
+      color: #eee;
+      font-family: monospace;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 2rem;
+    }
+
+    h1 a {
+      color: #e0c4eb;
+      text-decoration: none;
+    }
+
+    .controls {
+      display: flex;
+      align-items: baseline;
+      gap: 1.5rem;
+    }
+
+    #connect, #disconnect {
+      background: none;
+      border: none;
+      font-family: monospace;
+      font-size: 0.85rem;
+      padding: 0;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+    }
+
+    #connect { color: #555; }
+    #connect:hover { color: #eee; }
+    #disconnect { color: #333; font-size: 0.7rem; }
+    #disconnect:hover { color: #888; }
+
+    #events {
+      display: flex;
+      flex-direction: row;
+      gap: 2rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .event-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      align-items: flex-start;
+    }
+
+    .event-key {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #333;
+      transition: color 60ms ease-out;
+      user-select: none;
+    }
+
+    .event-key.active {
+      color: #e0c4eb;
+      transition: none;
+    }
+
+    .event-rate {
+      font-size: 0.6rem;
+      color: #2a2a2a;
+      font-variant-numeric: tabular-nums;
+      min-width: 3ch;
+    }
+
+    .event-rate.nonzero { color: #444; }
+
+    #status {
+      font-size: 0.7rem;
+      color: #555;
+      margin-top: 3rem;
+    }
+
+    #status button {
+      background: none;
+      border: none;
+      color: #888;
+      font-family: monospace;
+      font-size: 0.7rem;
+      padding: 0;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    #status button:hover { color: #eee; }
+
+    #bandwidth {
+      font-size: 0.65rem;
+      color: #333;
+      margin-top: 0.3rem;
+      min-height: 1rem;
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+
+  <h1><a href="/lab">lab</a> &gt; bsky / cacophony</h1>
+
+  <div class="controls">
+    <button id="connect">connect</button>
+    <button id="disconnect" hidden>disconnect</button>
+  </div>
+
+  <div id="events" hidden>
+    {[
+      { type: "app.bsky.feed.like",     label: "like"    },
+      { type: "app.bsky.feed.post",     label: "post"    },
+      { type: "app.bsky.feed.repost",   label: "repost"  },
+      { type: "app.bsky.graph.follow",  label: "follow"  },
+      { type: "app.bsky.actor.profile", label: "profile" },
+    ].map(({ type, label }) => (
+      <div class="event-col">
+        <span class="event-key" data-type={type}>{label}</span>
+        <span class="event-rate" data-rate={type}>0/s</span>
+      </div>
+    ))}
+  </div>
+
+  <div id="status"></div>
+  <div id="bandwidth"></div>
+
+  <script>
+    const JETSTREAM = "wss://jetstream2.us-east.bsky.network/subscribe";
+    const COLLECTIONS = [
+      "app.bsky.feed.like",
+      "app.bsky.feed.post",
+      "app.bsky.feed.repost",
+      "app.bsky.graph.follow",
+      "app.bsky.actor.profile",
+    ];
+    const COOLDOWN_MS = 80;
+
+    const NOTES = {
+      "app.bsky.feed.post":       523.25,
+      "app.bsky.feed.repost":     392.00,
+      "app.bsky.graph.follow":    329.63,
+      "app.bsky.actor.profile":   261.63,
+    };
+    const DECAY = {
+      "app.bsky.feed.post":      1.2,
+      "app.bsky.feed.repost":    1.0,
+      "app.bsky.graph.follow":   1.4,
+      "app.bsky.actor.profile":  1.6,
+    };
+
+    function likeRateToFreq(rate) {
+      const minRate = 1, maxRate = 200, minFreq = 60, maxFreq = 800;
+      const t = Math.log(Math.max(rate, minRate) / minRate) / Math.log(maxRate / minRate);
+      return minFreq + Math.min(t, 1) * (maxFreq - minFreq);
+    }
+
+    const connectBtn    = document.getElementById("connect");
+    const disconnectBtn = document.getElementById("disconnect");
+    const eventsEl      = document.getElementById("events");
+    const statusEl      = document.getElementById("status");
+    const bandwidthEl   = document.getElementById("bandwidth");
+
+    const keys  = {};
+    const rates = {};
+    document.querySelectorAll(".event-key").forEach(el => { keys[el.dataset.type] = el; });
+    document.querySelectorAll(".event-rate").forEach(el => { rates[el.dataset.rate] = el; });
+
+    let audioCtx = null;
+    let ws = null;
+    let lastFired = {};
+    let totalBytes = 0, windowBytes = 0;
+    let bwInterval = null;
+
+    let droneOsc = null, droneGain = null;
+    let lastLikeTime = null, smoothedLikeRate = 0;
+    let droneDecayInterval = null;
+
+    const eventCounts = Object.fromEntries(COLLECTIONS.map(c => [c, 0]));
+    let rateInterval = null;
+
+    connectBtn.addEventListener("click", () => {
+      if (!audioCtx) audioCtx = new AudioContext();
+      connectBtn.hidden = true;
+      disconnectBtn.hidden = false;
+      eventsEl.hidden = false;
+      connect();
+    });
+
+    disconnectBtn.addEventListener("click", disconnect);
+
+    function disconnect() {
+      if (ws) { ws.close(); ws = null; }
+      teardownDrone();
+      stopBandwidth();
+      stopRateCounter();
+      disconnectBtn.hidden = true;
+      connectBtn.hidden = false;
+      eventsEl.hidden = true;
+      setStatus("");
+      bandwidthEl.textContent = "";
+      COLLECTIONS.forEach(c => setRate(c, 0));
+    }
+
+    function connect() {
+      if (ws) { ws.close(); ws = null; }
+      totalBytes = 0; windowBytes = 0;
+      COLLECTIONS.forEach(c => { eventCounts[c] = 0; });
+
+      const url = new URL(JETSTREAM);
+      COLLECTIONS.forEach(col => url.searchParams.append("wantedCollections", col));
+      ws = new WebSocket(url);
+
+      ws.addEventListener("open", () => {
+        setStatus("live");
+        startBandwidth();
+        startRateCounter();
+        setupDrone();
+      });
+
+      ws.addEventListener("close", (e) => {
+        teardownDrone();
+        stopBandwidth();
+        stopRateCounter();
+        disconnectBtn.hidden = true;
+        connectBtn.hidden = false;
+        eventsEl.hidden = true;
+        const detail = e.reason ? `${e.code}: ${e.reason}` : `code ${e.code}`;
+        statusEl.innerHTML = `disconnected (${detail}) — <button id="reconnect">reconnect?</button>`;
+        document.getElementById("reconnect").addEventListener("click", () => {
+          connectBtn.hidden = true;
+          disconnectBtn.hidden = false;
+          eventsEl.hidden = false;
+          connect();
+        });
+      });
+
+      ws.addEventListener("error", () => { teardownDrone(); stopBandwidth(); stopRateCounter(); setStatus("connection error"); });
+
+      ws.addEventListener("message", (e) => {
+        totalBytes += e.data.length;
+        windowBytes += e.data.length;
+        try {
+          const evt = JSON.parse(e.data);
+          if (evt.kind !== "commit" || evt.commit?.operation !== "create") return;
+          const col = evt.commit.collection;
+          if (!COLLECTIONS.includes(col)) return;
+          eventCounts[col]++;
+          handleEvent(col);
+          flash(col);
+        } catch {}
+      });
+    }
+
+    function handleEvent(col) {
+      if (col === "app.bsky.feed.like") {
+        onLike();
+      } else {
+        const now = performance.now();
+        if (lastFired[col] && now - lastFired[col] < COOLDOWN_MS) return;
+        lastFired[col] = now;
+        playNote(NOTES[col], DECAY[col]);
+      }
+    }
+
+    // --- drone (likes) ---
+
+    function setupDrone() {
+      teardownDrone();
+      lastLikeTime = null;
+      smoothedLikeRate = 0;
+      droneOsc = audioCtx.createOscillator();
+      droneGain = audioCtx.createGain();
+      droneOsc.type = "sine";
+      droneOsc.frequency.value = likeRateToFreq(1);
+      droneGain.gain.value = 0;
+      droneOsc.connect(droneGain);
+      droneGain.connect(audioCtx.destination);
+      droneOsc.start();
+      droneDecayInterval = setInterval(() => {
+        if (lastLikeTime && performance.now() - lastLikeTime > 800) {
+          smoothedLikeRate *= 0.8;
+          if (smoothedLikeRate < 0.5) {
+            smoothedLikeRate = 0;
+            droneGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
+          } else {
+            droneOsc.frequency.setTargetAtTime(likeRateToFreq(smoothedLikeRate), audioCtx.currentTime, 0.3);
+          }
+        }
+      }, 100);
+    }
+
+    function onLike() {
+      const now = performance.now();
+      if (lastLikeTime !== null) {
+        const dt = Math.max(now - lastLikeTime, 5);
+        smoothedLikeRate = smoothedLikeRate * 0.8 + (1000 / dt) * 0.2;
+      } else {
+        smoothedLikeRate = 10;
+      }
+      lastLikeTime = now;
+      droneOsc.frequency.setTargetAtTime(likeRateToFreq(smoothedLikeRate), audioCtx.currentTime, 0.05);
+      droneGain.gain.setTargetAtTime(0.12, audioCtx.currentTime, 0.05);
+    }
+
+    function teardownDrone() {
+      if (droneDecayInterval) { clearInterval(droneDecayInterval); droneDecayInterval = null; }
+      if (droneOsc) { try { droneOsc.stop(); } catch {} droneOsc = null; }
+      droneGain = null;
+      smoothedLikeRate = 0;
+      lastLikeTime = null;
+    }
+
+    // --- piano ---
+
+    function playNote(freq, decay) {
+      const ctx = audioCtx, now = ctx.currentTime;
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      const osc2 = ctx.createOscillator(), gain2 = ctx.createGain();
+      osc.type = "sine"; osc.frequency.value = freq;
+      osc2.type = "sine"; osc2.frequency.value = freq * 2;
+      osc.connect(gain); osc2.connect(gain2);
+      gain.connect(ctx.destination); gain2.connect(ctx.destination);
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + decay);
+      gain2.gain.setValueAtTime(0.08, now);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + decay * 0.6);
+      osc.start(now); osc.stop(now + decay);
+      osc2.start(now); osc2.stop(now + decay * 0.6);
+    }
+
+    // --- flash ---
+
+    function flash(col) {
+      const el = keys[col];
+      if (!el) return;
+      el.classList.add("active");
+      setTimeout(() => el.classList.remove("active"), 120);
+    }
+
+    // --- rate counter ---
+
+    function startRateCounter() {
+      if (rateInterval) clearInterval(rateInterval);
+      rateInterval = setInterval(() => {
+        COLLECTIONS.forEach(col => {
+          setRate(col, eventCounts[col]);
+          eventCounts[col] = 0;
+        });
+      }, 1000);
+    }
+
+    function stopRateCounter() {
+      if (rateInterval) { clearInterval(rateInterval); rateInterval = null; }
+      COLLECTIONS.forEach(c => setRate(c, 0));
+    }
+
+    function setRate(col, count) {
+      const el = rates[col];
+      if (!el) return;
+      el.textContent = count > 0 ? `${count}/s` : "0/s";
+      el.classList.toggle("nonzero", count > 0);
+    }
+
+    // --- bandwidth ---
+
+    function startBandwidth() {
+      if (bwInterval) clearInterval(bwInterval);
+      bwInterval = setInterval(() => {
+        bandwidthEl.textContent = `${fmtBytes(totalBytes)} total · ${fmtBytes(windowBytes)}/s`;
+        windowBytes = 0;
+      }, 1000);
+    }
+
+    function stopBandwidth() {
+      if (bwInterval) { clearInterval(bwInterval); bwInterval = null; }
+    }
+
+    function fmtBytes(n) {
+      if (n < 1024) return `${n} B`;
+      if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+      return `${(n / 1024 / 1024).toFixed(2)} MB`;
+    }
+
+    function setStatus(msg) { statusEl.textContent = msg; }
+  </script>
+</Lab>
