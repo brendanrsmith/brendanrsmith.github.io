@@ -1,0 +1,424 @@
+---
+import Lab from "../../layouts/Lab.astro";
+---
+
+<Lab title="bsky feed">
+  <style is:global>
+    body {
+      background: #0a0a0a;
+      color: #eee;
+      font-family: monospace;
+      padding: 2rem;
+      max-width: 640px;
+    }
+
+    h1 {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 2rem;
+    }
+
+    h1 a {
+      color: #e0c4eb;
+      text-decoration: none;
+    }
+
+    .input-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #333;
+      color: #eee;
+      font-family: monospace;
+      font-size: 0.85rem;
+      padding: 0.25rem 0;
+      width: 260px;
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #444;
+    }
+
+    .suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: #111;
+      border: 1px solid #222;
+      width: 100%;
+      z-index: 10;
+    }
+
+    .suggestions button {
+      display: block;
+      width: 100%;
+      background: none;
+      border: none;
+      color: #aaa;
+      font-family: monospace;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.6rem;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .suggestions button:hover,
+    .suggestions button.active {
+      background: #1a1a1a;
+      color: #eee;
+    }
+
+    #status {
+      font-size: 0.7rem;
+      color: #555;
+      margin-top: 1.5rem;
+      min-height: 1rem;
+    }
+
+    #status button {
+      background: none;
+      border: none;
+      color: #888;
+      font-family: monospace;
+      font-size: 0.7rem;
+      padding: 0;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    #status button:hover {
+      color: #eee;
+    }
+
+    #bandwidth {
+      font-size: 0.65rem;
+      color: #333;
+      margin-top: 0.3rem;
+      min-height: 1rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #feed {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .event {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .event-line {
+      font-size: 0.8rem;
+      color: #ccc;
+      line-height: 1.5;
+    }
+
+    .event-line .who {
+      color: #eee;
+    }
+
+    .event-line .verb {
+      color: #666;
+    }
+
+    .event-line .what {
+      color: #aaa;
+    }
+
+    .event-time {
+      font-size: 0.65rem;
+      color: #333;
+    }
+
+    .post-text {
+      font-size: 0.78rem;
+      color: #888;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-top: 0.15rem;
+      padding-left: 0.5rem;
+      border-left: 1px solid #222;
+    }
+  </style>
+
+  <h1><a href="/lab">lab</a> &gt; bsky / feed</h1>
+
+  <div class="input-wrap">
+    <input id="handle" type="text" placeholder="handle.bsky.social" autocomplete="off" autocapitalize="off" spellcheck="false" />
+    <div class="suggestions" id="suggestions" hidden></div>
+  </div>
+
+  <div id="status"></div>
+  <div id="bandwidth"></div>
+  <div id="feed"></div>
+
+  <script>
+    const API = "https://public.api.bsky.app/xrpc";
+    const JETSTREAM = "wss://jetstream2.us-east.bsky.network/subscribe";
+    const MAX_FOLLOWS = 2000;
+    const MAX_WATCH = 100;
+    const MAX_EVENTS = 100;
+
+    async function xrpc(method, params = {}) {
+      const url = new URL(`${API}/${method}`);
+      for (const [k, v] of Object.entries(params)) {
+        if (v != null) url.searchParams.set(k, v);
+      }
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`${res.status}`);
+      return res.json();
+    }
+
+    // --- typeahead ---
+
+    const input = document.getElementById("handle");
+    const suggestionsEl = document.getElementById("suggestions");
+    const statusEl = document.getElementById("status");
+    const bandwidthEl = document.getElementById("bandwidth");
+    const feedEl = document.getElementById("feed");
+
+    let debounceTimer;
+    let activeIdx = -1;
+    let ws = null;
+    let currentActor = null;
+
+    let totalBytes = 0;
+    let windowBytes = 0;
+    let bytesPerSec = 0;
+    let bwInterval = null;
+
+    function startBandwidth() {
+      totalBytes = 0;
+      windowBytes = 0;
+      bytesPerSec = 0;
+      if (bwInterval) clearInterval(bwInterval);
+      bwInterval = setInterval(() => {
+        bytesPerSec = windowBytes;
+        windowBytes = 0;
+        bandwidthEl.textContent = `${fmtBytes(totalBytes)} total · ${fmtBytes(bytesPerSec)}/s`;
+      }, 1000);
+    }
+
+    function stopBandwidth() {
+      if (bwInterval) { clearInterval(bwInterval); bwInterval = null; }
+      bandwidthEl.textContent = "";
+    }
+
+    function fmtBytes(n) {
+      if (n < 1024) return `${n} B`;
+      if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+      return `${(n / 1024 / 1024).toFixed(2)} MB`;
+    }
+
+    input.addEventListener("input", () => {
+      clearTimeout(debounceTimer);
+      const q = input.value.trim().replace(/^@/, "");
+      if (q.length < 2) { hideSuggestions(); return; }
+      debounceTimer = setTimeout(() => fetchSuggestions(q), 200);
+    });
+
+    input.addEventListener("keydown", (e) => {
+      const btns = suggestionsEl.querySelectorAll("button");
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeIdx = Math.min(activeIdx + 1, btns.length - 1);
+        updateActive(btns);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeIdx = Math.max(activeIdx - 1, -1);
+        updateActive(btns);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (activeIdx >= 0 && btns[activeIdx]) {
+          btns[activeIdx].click();
+        } else {
+          start(input.value.trim().replace(/^@/, ""));
+        }
+      } else if (e.key === "Escape") {
+        hideSuggestions();
+      }
+    });
+
+    function updateActive(btns) {
+      btns.forEach((b, i) => b.classList.toggle("active", i === activeIdx));
+    }
+
+    async function fetchSuggestions(q) {
+      try {
+        const { actors } = await xrpc("app.bsky.actor.searchActorsTypeahead", { q, limit: 6 });
+        if (!actors.length) { hideSuggestions(); return; }
+        suggestionsEl.innerHTML = "";
+        activeIdx = -1;
+        for (const actor of actors) {
+          const btn = document.createElement("button");
+          btn.textContent = actor.handle;
+          btn.addEventListener("click", () => {
+            input.value = actor.handle;
+            hideSuggestions();
+            start(actor.handle);
+          });
+          suggestionsEl.appendChild(btn);
+        }
+        suggestionsEl.hidden = false;
+      } catch {}
+    }
+
+    function hideSuggestions() {
+      suggestionsEl.hidden = true;
+      suggestionsEl.innerHTML = "";
+      activeIdx = -1;
+    }
+
+    // --- main ---
+
+    async function start(actor) {
+      currentActor = actor;
+      hideSuggestions();
+      feedEl.innerHTML = "";
+      if (ws) { ws.close(); ws = null; }
+
+      setStatus("fetching follows...");
+
+      let profiles;
+      try {
+        profiles = await fetchAllFollows(actor);
+      } catch {
+        setStatus(`could not resolve: ${actor}`);
+        return;
+      }
+
+      const allDids = Object.keys(profiles);
+      if (allDids.length === 0) { setStatus("no follows found"); return; }
+
+      setStatus(`connecting — watching ${allDids.length} accounts`);
+      connect(profiles);
+    }
+
+    async function fetchAllFollows(actor) {
+      const profiles = {};
+      let cursor;
+      do {
+        const res = await xrpc("app.bsky.graph.getFollows", { actor, limit: 100, cursor });
+        for (const f of res.follows) {
+          profiles[f.did] = f.handle;
+        }
+        cursor = res.cursor;
+        const count = Object.keys(profiles).length;
+        if (cursor) setStatus(`fetching follows… ${count}${count >= MAX_FOLLOWS ? " (max)" : ""}`);
+      } while (cursor && Object.keys(profiles).length < MAX_FOLLOWS);
+      return profiles;
+    }
+
+    function connect(profiles) {
+      const didSet = new Set(Object.keys(profiles));
+      const url = new URL(JETSTREAM);
+      for (const col of ["app.bsky.feed.post", "app.bsky.feed.like", "app.bsky.feed.repost", "app.bsky.graph.follow", "app.bsky.actor.profile"]) {
+        url.searchParams.append("wantedCollections", col);
+      }
+
+      ws = new WebSocket(url);
+
+      ws.addEventListener("open", () => { setStatus(`live — watching ${didSet.size} accounts`); startBandwidth(); });
+      ws.addEventListener("close", () => {
+        stopBandwidth();
+        statusEl.innerHTML = `disconnected — <button id="reconnect">reconnect?</button>`;
+        document.getElementById("reconnect").addEventListener("click", () => start(currentActor));
+      });
+      ws.addEventListener("error", () => { stopBandwidth(); setStatus("connection error"); });
+      ws.addEventListener("message", (e) => {
+        totalBytes += e.data.length;
+        windowBytes += e.data.length;
+        try {
+          const evt = JSON.parse(e.data);
+          if (evt.kind !== "commit" || evt.commit?.operation !== "create") return;
+          if (!didSet.has(evt.did)) return;
+          const handle = profiles[evt.did] ?? evt.did;
+          renderEvent(handle, evt.commit.collection, evt.commit.record, evt.time_us);
+        } catch {}
+      });
+    }
+
+    function renderEvent(handle, collection, record, time_us) {
+      const time = new Date(time_us / 1000).toISOString().slice(11, 19);
+
+      let verb, what, text;
+
+      if (collection === "app.bsky.feed.post") {
+        verb = "posted";
+        text = record?.text?.trim();
+      } else if (collection === "app.bsky.feed.like") {
+        verb = "liked a post";
+      } else if (collection === "app.bsky.feed.repost") {
+        verb = "reposted";
+      } else if (collection === "app.bsky.graph.follow") {
+        verb = "followed";
+        what = record?.subject ? `@${record.subject}` : "someone";
+      } else if (collection === "app.bsky.actor.profile") {
+        verb = "updated their profile";
+        if (record?.displayName) what = `"${record.displayName}"`;
+      } else {
+        return;
+      }
+
+      const div = document.createElement("div");
+      div.className = "event";
+
+      const line = document.createElement("div");
+      line.className = "event-line";
+      line.innerHTML = `<span class="who">@${escapeHtml(handle)}</span> <span class="verb">${verb}</span>${what ? ` <span class="what">${escapeHtml(what)}</span>` : ""}`;
+      div.appendChild(line);
+
+      if (text) {
+        const p = document.createElement("div");
+        p.className = "post-text";
+        p.textContent = text.length > 200 ? text.slice(0, 200) + "…" : text;
+        div.appendChild(p);
+      }
+
+      const t = document.createElement("div");
+      t.className = "event-time";
+      t.textContent = time;
+      div.appendChild(t);
+
+      feedEl.prepend(div);
+
+      // trim old events
+      while (feedEl.children.length > MAX_EVENTS) {
+        feedEl.removeChild(feedEl.lastChild);
+      }
+    }
+
+    function sample(arr, n) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy.slice(0, n);
+    }
+
+    function setStatus(msg) {
+      statusEl.textContent = msg;
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".input-wrap")) hideSuggestions();
+    });
+  </script>
+</Lab>

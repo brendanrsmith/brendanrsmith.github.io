@@ -1,0 +1,322 @@
+---
+import Lab from "../../layouts/Lab.astro";
+---
+
+<Lab title="bsky">
+  <style is:global>
+    body {
+      background: #0a0a0a;
+      color: #eee;
+      font-family: monospace;
+      padding: 2rem;
+      max-width: 600px;
+    }
+
+    h1 {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 2rem;
+    }
+
+    h1 a {
+      color: #e0c4eb;
+      text-decoration: none;
+    }
+
+    .input-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #333;
+      color: #eee;
+      font-family: monospace;
+      font-size: 0.85rem;
+      padding: 0.25rem 0;
+      width: 260px;
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #444;
+    }
+
+    .suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: #111;
+      border: 1px solid #222;
+      width: 100%;
+      z-index: 10;
+    }
+
+    .suggestions button {
+      display: block;
+      width: 100%;
+      background: none;
+      border: none;
+      color: #aaa;
+      font-family: monospace;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.6rem;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .suggestions button:hover,
+    .suggestions button.active {
+      background: #1a1a1a;
+      color: #eee;
+    }
+
+    #profile {
+      margin-top: 2.5rem;
+      display: none;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+
+    }
+
+    .avatar-placeholder {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #222;
+      flex-shrink: 0;
+    }
+
+    .profile-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .display-name {
+      font-size: 0.85rem;
+      color: #eee;
+    }
+
+    .handle {
+      font-size: 0.7rem;
+      color: #555;
+    }
+
+    .bio {
+      font-size: 0.7rem;
+      color: #666;
+      margin-top: 0.2rem;
+      line-height: 1.5;
+    }
+
+    .posts {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .post {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .post-text {
+      font-size: 0.8rem;
+      color: #ccc;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .post-date {
+      font-size: 0.65rem;
+      color: #444;
+    }
+
+    .error {
+      font-size: 0.75rem;
+      color: #664444;
+      margin-top: 1rem;
+    }
+  </style>
+
+  <h1><a href="/lab">lab</a> &gt; bsky</h1>
+
+  <div class="input-wrap">
+    <input id="handle" type="text" placeholder="handle.bsky.social" autocomplete="off" autocapitalize="off" spellcheck="false" />
+    <div class="suggestions" id="suggestions" hidden></div>
+  </div>
+
+  <div id="profile">
+    <div class="profile-header">
+      <div id="avatar-wrap"></div>
+      <div class="profile-meta">
+        <span class="display-name" id="display-name"></span>
+        <span class="handle" id="handle-display"></span>
+        <span class="bio" id="bio"></span>
+      </div>
+    </div>
+    <div class="posts" id="posts"></div>
+  </div>
+
+  <div class="error" id="error" hidden></div>
+
+  <script>
+    const API = "https://public.api.bsky.app/xrpc";
+
+    async function xrpc(method, params = {}) {
+      const url = new URL(`${API}/${method}`);
+      for (const [k, v] of Object.entries(params)) {
+        if (v != null) url.searchParams.set(k, v);
+      }
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`${res.status}`);
+      return res.json();
+    }
+
+    const input = document.getElementById("handle");
+    const suggestionsEl = document.getElementById("suggestions");
+    const profileEl = document.getElementById("profile");
+    const errorEl = document.getElementById("error");
+
+    let debounceTimer;
+    let activeIdx = -1;
+
+    input.addEventListener("input", () => {
+      clearTimeout(debounceTimer);
+      const q = input.value.trim().replace(/^@/, "");
+      if (q.length < 2) { hideSuggestions(); return; }
+      debounceTimer = setTimeout(() => fetchSuggestions(q), 200);
+    });
+
+    input.addEventListener("keydown", (e) => {
+      const btns = suggestionsEl.querySelectorAll("button");
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeIdx = Math.min(activeIdx + 1, btns.length - 1);
+        updateActive(btns);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeIdx = Math.max(activeIdx - 1, -1);
+        updateActive(btns);
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (activeIdx >= 0 && btns[activeIdx]) {
+          btns[activeIdx].click();
+        } else {
+          loadProfile(input.value.trim().replace(/^@/, ""));
+        }
+      } else if (e.key === "Escape") {
+        hideSuggestions();
+      }
+    });
+
+    function updateActive(btns) {
+      btns.forEach((b, i) => b.classList.toggle("active", i === activeIdx));
+    }
+
+    async function fetchSuggestions(q) {
+      try {
+        const { actors } = await xrpc("app.bsky.actor.searchActorsTypeahead", { q, limit: 6 });
+        if (!actors.length) { hideSuggestions(); return; }
+        suggestionsEl.innerHTML = "";
+        activeIdx = -1;
+        for (const actor of actors) {
+          const btn = document.createElement("button");
+          btn.textContent = actor.handle;
+          btn.addEventListener("click", () => {
+            input.value = actor.handle;
+            hideSuggestions();
+            loadProfile(actor.handle);
+          });
+          suggestionsEl.appendChild(btn);
+        }
+        suggestionsEl.hidden = false;
+      } catch {}
+    }
+
+    function hideSuggestions() {
+      suggestionsEl.hidden = true;
+      suggestionsEl.innerHTML = "";
+      activeIdx = -1;
+    }
+
+    async function loadProfile(actor) {
+      hideSuggestions();
+      errorEl.hidden = true;
+      profileEl.style.display = "none";
+
+      try {
+        const [profile, feed] = await Promise.all([
+          xrpc("app.bsky.actor.getProfile", { actor }),
+          xrpc("app.bsky.feed.getAuthorFeed", { actor, filter: "posts_no_replies", limit: 25 }),
+        ]);
+
+        // avatar
+        const avatarWrap = document.getElementById("avatar-wrap");
+        if (profile.avatar) {
+          avatarWrap.innerHTML = `<img class="avatar" src="${profile.avatar}" alt="" />`;
+        } else {
+          avatarWrap.innerHTML = `<div class="avatar-placeholder"></div>`;
+        }
+
+        document.getElementById("display-name").textContent = profile.displayName || profile.handle;
+        document.getElementById("handle-display").textContent = `@${profile.handle}`;
+        const bioEl = document.getElementById("bio");
+        bioEl.textContent = profile.description || "";
+        bioEl.hidden = !profile.description;
+
+        // posts — text only, last 10
+        const posts = feed.feed
+          .map((item) => item.post)
+          .filter((p) => p.record?.text?.trim())
+          .slice(0, 10);
+
+        const postsEl = document.getElementById("posts");
+        postsEl.innerHTML = "";
+        for (const post of posts) {
+          const div = document.createElement("div");
+          div.className = "post";
+          const date = new Date(post.record.createdAt);
+          div.innerHTML = `
+            <span class="post-text">${escapeHtml(post.record.text)}</span>
+            <span class="post-date">${date.toISOString().slice(0, 16).replace("T", " ")}</span>
+          `;
+          postsEl.appendChild(div);
+        }
+
+        profileEl.style.display = "block";
+      } catch (err) {
+        errorEl.textContent = `not found: ${actor}`;
+        errorEl.hidden = false;
+      }
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".input-wrap")) hideSuggestions();
+    });
+  </script>
+</Lab>
