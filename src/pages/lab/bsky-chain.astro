@@ -219,6 +219,15 @@ import Lab from "../../layouts/Lab.astro";
 
     #depth.nonzero { color: #777; }
 
+    #timer {
+      font-size: 0.65rem;
+      color: #333;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #timer.stuck { color: #7a6830; }
+
     #chain {
       margin-top: 2rem;
       display: flex;
@@ -305,6 +314,10 @@ import Lab from "../../layouts/Lab.astro";
 
     .node.current .node-handle { color: #eee; }
     .node.current .node-via { color: #888; }
+
+    .node.in-seed-graph .node-handle a { color: #e0c4eb; }
+
+    .node.stuck .node-meta { color: #7a6830; }
 
     @keyframes node-in {
       from { opacity: 0; transform: translateY(-10px); }
@@ -502,6 +515,7 @@ import Lab from "../../layouts/Lab.astro";
       </div>
       <div class="status-row">
         <div id="status"></div>
+        <div id="timer"></div>
         <div id="depth"></div>
       </div>
       <div id="chain"></div>
@@ -583,6 +597,7 @@ import Lab from "../../layouts/Lab.astro";
     const depthEl = document.getElementById("depth");
     const chainEl = document.getElementById("chain");
     const postPanel = document.getElementById("post-panel");
+    const timerEl = document.getElementById("timer");
 
     let debounceTimer, activeIdx = -1;
     let ws = null;
@@ -594,6 +609,10 @@ import Lab from "../../layouts/Lab.astro";
     let shadowCount = 0;
     let currentActor = null;
     const MAX_SHADOWS = 8;
+    let seedFollowDids = new Set();
+    let nodeTimer = null;
+    let nodeStartTime = null;
+    const STUCK_MS = 90_000;
 
     // --- typeahead ---
     input.addEventListener("input", () => {
@@ -677,12 +696,15 @@ import Lab from "../../layouts/Lab.astro";
       currentNode = null;
       shadowCount = 0;
       currentActor = null;
+      seedFollowDids = new Set();
+      if (nodeTimer) { clearInterval(nodeTimer); nodeTimer = null; }
+      setTimer(null);
       input.disabled = false;
       input.placeholder = "seed handle";
       clearBtn.hidden = true;
     }
 
-    async function hop(actor, viaText, likedUri, post) {
+    async function hop(actor, viaText, likedUri, post, inSeedGraph = false) {
       if (!running) return;
       hopping = true;
 
@@ -695,6 +717,7 @@ import Lab from "../../layouts/Lab.astro";
       // chain node
       const node = document.createElement("div");
       node.className = "node current";
+      if (inSeedGraph) node.classList.add("in-seed-graph");
       currentNode = node;
 
       const infoEl = document.createElement("div");
@@ -726,6 +749,18 @@ import Lab from "../../layouts/Lab.astro";
       node.appendChild(infoEl);
       chainEl.prepend(node);
 
+      if (nodeTimer) clearInterval(nodeTimer);
+      nodeStartTime = Date.now();
+      nodeTimer = setInterval(() => {
+        const elapsed = Date.now() - nodeStartTime;
+        setTimer(elapsed);
+        if (elapsed >= STUCK_MS && !currentNode?.classList.contains("stuck")) {
+          currentNode?.classList.add("stuck");
+          statusEl.innerHTML = `quiet here — <button id="random-hop-btn">hop random</button>`;
+          document.getElementById("random-hop-btn").addEventListener("click", hopRandom);
+        }
+      }, 1000);
+
       // update post panel
       if (post) renderPost(post, likedUri);
 
@@ -733,6 +768,7 @@ import Lab from "../../layouts/Lab.astro";
       setStatus(`fetching follows for @${actor}…`);
       try {
         profiles = await fetchFollows(actor);
+        if (seedFollowDids.size === 0) seedFollowDids = new Set(Object.keys(profiles));
       } catch {
         setStatus(`could not fetch follows for @${actor}`);
         running = false;
@@ -851,7 +887,8 @@ import Lab from "../../layouts/Lab.astro";
 
           const post = (targetUri && postsRes.status === "fulfilled") ? postsRes.value.posts?.[0] : null;
           const viaText = col === "app.bsky.feed.post" ? "posted" : `${verb} by @${actorHandle}`;
-          await hop(profile.handle, viaText, targetUri, post);
+          const inSeedGraph = seedFollowDids.has(targetDid);
+          await hop(profile.handle, viaText, targetUri, post, inSeedGraph);
         } catch {}
       });
     }
@@ -1023,6 +1060,31 @@ import Lab from "../../layouts/Lab.astro";
         cursor = res.cursor;
       } while (cursor && Object.keys(result).length < MAX_FOLLOWS);
       return result;
+    }
+
+    async function hopRandom() {
+      const dids = Object.keys(profiles);
+      if (!dids.length || hopping) return;
+      hopping = true;
+      setStatus("picking random follow…");
+      try {
+        const did = dids[Math.floor(Math.random() * dids.length)];
+        const profile = await xrpc("app.bsky.actor.getProfile", { actor: did });
+        const inSeedGraph = seedFollowDids.has(did);
+        await hop(profile.handle, "random hop", null, null, inSeedGraph);
+      } catch {
+        hopping = false;
+        setStatus("random hop failed");
+      }
+    }
+
+    function setTimer(elapsed) {
+      if (elapsed === null) { timerEl.textContent = ""; timerEl.classList.remove("stuck"); return; }
+      const secs = Math.floor(elapsed / 1000);
+      const m = Math.floor(secs / 60);
+      const s = secs % 60;
+      timerEl.textContent = `${m}:${String(s).padStart(2, "0")}`;
+      timerEl.classList.toggle("stuck", elapsed >= STUCK_MS);
     }
 
     function setStatus(msg) { statusEl.textContent = msg; }
