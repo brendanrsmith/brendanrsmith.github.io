@@ -34,12 +34,38 @@ import Lab from "../../layouts/Lab.astro";
       border: none;
       color: #666;
       font-family: monospace;
-      font-size: 0.7rem;
+      font-size: 0.85rem;
       padding: 0;
       cursor: pointer;
     }
 
     .info-btn:hover { color: #bbb; }
+
+    #clear-btn {
+      background: none;
+      border: none;
+      color: #444;
+      font-family: monospace;
+      font-size: 1.1rem;
+      padding: 0;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    #clear-btn:hover { color: #aaa; }
+
+    #status button {
+      background: none;
+      border: none;
+      color: #888;
+      font-family: monospace;
+      /*font-size: 0.7rem;*/
+      padding: 0;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    #status button:hover { color: #eee; }
 
     .info-popover {
       position: absolute;
@@ -48,7 +74,7 @@ import Lab from "../../layouts/Lab.astro";
       background: #111;
       border: 1px solid #222;
       color: #888;
-      font-size: 0.68rem;
+      font-size: 0.75rem;
       line-height: 1.6;
       padding: 0.75rem 1rem;
       width: 280px;
@@ -438,6 +464,7 @@ import Lab from "../../layouts/Lab.astro";
       <div class="input-wrap">
         <input id="handle" type="text" placeholder="seed handle" autocomplete="off" autocapitalize="off" spellcheck="false" />
         <div class="suggestions" id="suggestions" hidden></div>
+        <button id="clear-btn" hidden>×</button>
         <span class="info-wrap">
           <button class="info-btn" id="info-btn">?</button>
           <button class="info-btn" id="stats-btn">i</button>
@@ -464,6 +491,12 @@ import Lab from "../../layouts/Lab.astro";
               <div class="stats-row"><span class="sk">triggered</span><span class="sv" id="sv-triggered">—</span></div>
               <div class="stats-row"><span class="sk">branches</span><span class="sv" id="sv-branches">—</span></div>
             </div>
+            <div class="stats-divider"></div>
+            <div class="stats-section">
+              <div class="stats-section-label">firehose</div>
+              <div class="stats-row"><span class="sk">seen</span><span class="sv" id="sv-seen">—</span></div>
+              <div class="stats-row"><span class="sk">matched</span><span class="sv" id="sv-matched">—</span></div>
+            </div>
           </div>
         </span>
       </div>
@@ -482,7 +515,7 @@ import Lab from "../../layouts/Lab.astro";
     const API = "https://public.api.bsky.app/xrpc";
     const JETSTREAM = "wss://jetstream2.us-east.bsky.network/subscribe";
     const MAX_FOLLOWS = 10000;
-    const MIN_FOLLOWS = 10;
+    const MIN_FOLLOWS = 40;
 
     async function xrpc(method, params = {}) {
       const url = new URL(`${API}/${method}`);
@@ -518,12 +551,12 @@ import Lab from "../../layouts/Lab.astro";
     const statsPopover = document.getElementById("stats-popover");
     statsBtn.addEventListener("click", (e) => { e.stopPropagation(); infoPopover.classList.remove("open"); statsPopover.classList.toggle("open"); updateStatsDisplay(); });
 
-    const stats = { hops: 0, processed: { like: 0, repost: 0, post: 0, follow: 0 }, triggered: 0, branches: 0, skipped: 0 };
+    const stats = { hops: 0, processed: { like: 0, repost: 0, post: 0, follow: 0 }, triggered: 0, branches: 0, skipped: 0, seen: 0 };
 
     function resetStats() {
       stats.hops = 0; stats.processed.like = 0; stats.processed.repost = 0;
       stats.processed.post = 0; stats.processed.follow = 0;
-      stats.triggered = 0; stats.branches = 0; stats.skipped = 0;
+      stats.triggered = 0; stats.branches = 0; stats.skipped = 0; stats.seen = 0;
       updateStatsDisplay();
     }
 
@@ -538,6 +571,9 @@ import Lab from "../../layouts/Lab.astro";
       document.getElementById("sv-p-follow").textContent  = f(stats.processed.follow);
       document.getElementById("sv-triggered").textContent = f(stats.triggered);
       document.getElementById("sv-branches").textContent  = f(stats.branches);
+      document.getElementById("sv-seen").textContent      = f(stats.seen);
+      const matched = stats.processed.like + stats.processed.repost + stats.processed.post + stats.processed.follow;
+      document.getElementById("sv-matched").textContent   = f(matched);
     }
 
     // --- elements ---
@@ -556,6 +592,7 @@ import Lab from "../../layouts/Lab.astro";
     let depth = 0;
     let currentNode = null;
     let shadowCount = 0;
+    let currentActor = null;
     const MAX_SHADOWS = 8;
 
     // --- typeahead ---
@@ -598,10 +635,24 @@ import Lab from "../../layouts/Lab.astro";
     function hideSuggestions() { suggestionsEl.hidden = true; suggestionsEl.innerHTML = ""; activeIdx = -1; }
     document.addEventListener("click", (e) => { if (!e.target.closest(".input-wrap")) hideSuggestions(); });
 
+    const clearBtn = document.getElementById("clear-btn");
+    clearBtn.addEventListener("click", () => {
+      stop();
+      chainEl.innerHTML = "";
+      postPanel.innerHTML = `<p class="post-empty">—</p>`;
+      setDepth(0);
+      setStatus("");
+    });
+
     // --- chain ---
     async function start(actor) {
       hideSuggestions();
       stop();
+      currentActor = actor;
+      input.disabled = true;
+      input.value = "";
+      input.placeholder = actor;
+      clearBtn.hidden = false;
       chainEl.innerHTML = "";
       postPanel.innerHTML = `<p class="post-empty">—</p>`;
       depth = 0;
@@ -625,6 +676,10 @@ import Lab from "../../layouts/Lab.astro";
       profiles = {};
       currentNode = null;
       shadowCount = 0;
+      currentActor = null;
+      input.disabled = false;
+      input.placeholder = "seed handle";
+      clearBtn.hidden = true;
     }
 
     async function hop(actor, viaText, likedUri, post) {
@@ -693,6 +748,10 @@ import Lab from "../../layouts/Lab.astro";
 
       if (!running) return;
 
+      connectJetstream(actor, count);
+    }
+
+    function connectJetstream(actor, count) {
       if (ws) { ws.close(); ws = null; }
       const url = new URL(JETSTREAM);
       for (const col of ["app.bsky.feed.like", "app.bsky.feed.repost", "app.bsky.feed.post", "app.bsky.graph.follow"]) {
@@ -706,13 +765,18 @@ import Lab from "../../layouts/Lab.astro";
         setStatus(`watching @${actor}'s ${count} follows`);
       });
 
-      ws.addEventListener("close", (e) => { if (running) setStatus(`disconnected (code ${e.code})`); });
+      ws.addEventListener("close", (e) => {
+        if (!running) return;
+        statusEl.innerHTML = `disconnected (code ${e.code}) — <button id="reconnect-btn">reconnect</button>`;
+        document.getElementById("reconnect-btn").addEventListener("click", reconnect);
+      });
 
       ws.addEventListener("message", async (e) => {
         if (!running) return;
         try {
           const evt = JSON.parse(e.data);
           if (evt.kind !== "commit" || evt.commit?.operation !== "create") return;
+          stats.seen++;
           if (!profiles[evt.did]) return;
 
           const col = evt.commit.collection;
@@ -790,6 +854,19 @@ import Lab from "../../layouts/Lab.astro";
           await hop(profile.handle, viaText, targetUri, post);
         } catch {}
       });
+    }
+
+    async function reconnect() {
+      if (!currentActor || !running) return;
+      setStatus(`reconnecting…`);
+      try {
+        profiles = await fetchFollows(currentActor);
+      } catch {
+        setStatus(`could not reconnect`);
+        return;
+      }
+      const count = Object.keys(profiles).length;
+      connectJetstream(currentActor, count);
     }
 
     function addShadow(verb, actorHandle, url) {
