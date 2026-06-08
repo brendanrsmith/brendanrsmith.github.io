@@ -477,7 +477,7 @@ import Lab from "../../layouts/Lab.astro";
   <script>
     const API = "https://public.api.bsky.app/xrpc";
     const JETSTREAM = "wss://jetstream2.us-east.bsky.network/subscribe";
-    const MAX_FOLLOWS = 500;
+    const MAX_FOLLOWS = 10000;
     const MIN_FOLLOWS = 10;
 
     async function xrpc(method, params = {}) {
