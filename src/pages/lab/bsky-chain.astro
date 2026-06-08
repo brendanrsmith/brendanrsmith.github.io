@@ -26,8 +26,9 @@ import BskyChain from "../../components/lab/BskyChain";
     }
 
     .info-wrap {
-      display: inline-block;
+      display: inline-flex;
       position: relative;
+      gap: 0.5rem;
     }
 
     .info-btn {
@@ -68,32 +69,21 @@ import BskyChain from "../../components/lab/BskyChain";
     #status button:hover { color: #eee; }
 
     .info-popover {
-      position: absolute;
-      top: 1.4rem;
-      left: 0;
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
       background: #111;
       border: 1px solid #222;
       color: #888;
       font-size: 0.75rem;
       line-height: 1.6;
       padding: 0.75rem 1rem;
-      width: 280px;
+      width: 260px;
       z-index: 20;
       display: none;
     }
 
     .info-popover.open { display: block; }
-
-    .stats-popover {
-      position: fixed;
-      top: 2rem;
-      right: 2rem;
-      left: auto;
-      width: 220px;
-      display: none;
-    }
-
-    .stats-popover.open { display: block; }
 
     .stats-section {
       display: flex;
@@ -193,9 +183,6 @@ import BskyChain from "../../components/lab/BskyChain";
     }
 
     .status-row {
-      display: flex;
-      align-items: baseline;
-      gap: 1rem;
       margin-top: 1.5rem;
       min-height: 1rem;
     }
@@ -203,11 +190,17 @@ import BskyChain from "../../components/lab/BskyChain";
     #status {
       font-size: 0.7rem;
       color: #777;
-      flex: 1;
       min-height: 1.2em;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-top: 0.35rem;
     }
 
     #timer {
@@ -221,12 +214,17 @@ import BskyChain from "../../components/lab/BskyChain";
 
     #depth {
       font-size: 0.65rem;
-      color: #444;
+      color: #777;
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
     }
 
-    #depth.nonzero { color: #777; }
+    #skips {
+      font-size: 0.65rem;
+      color: #444;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
 
     #chain {
       margin-top: 2rem;
@@ -325,6 +323,19 @@ import BskyChain from "../../components/lab/BskyChain";
     }
 
     .node { animation: node-in 0.2s ease-out; }
+
+    @keyframes post-in {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes post-out {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(8px); }
+    }
+
+    .post-panel-inner { animation: post-in 0.3s ease-out; }
+    .post-panel-inner.exiting { animation: post-out 0.22s ease-in forwards; }
 
     /* post panel */
     #post-panel {
