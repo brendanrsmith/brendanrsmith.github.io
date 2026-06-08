@@ -27,21 +27,19 @@ import Lab from "../../layouts/Lab.astro";
     .info-wrap {
       display: inline-block;
       position: relative;
-      margin-left: 0.5rem;
-      vertical-align: middle;
     }
 
     .info-btn {
       background: none;
       border: none;
-      color: #333;
+      color: #666;
       font-family: monospace;
       font-size: 0.7rem;
       padding: 0;
       cursor: pointer;
     }
 
-    .info-btn:hover { color: #888; }
+    .info-btn:hover { color: #bbb; }
 
     .info-popover {
       position: absolute;
@@ -60,23 +58,70 @@ import Lab from "../../layouts/Lab.astro";
 
     .info-popover.open { display: block; }
 
+    .stats-popover {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      left: auto;
+      width: 220px;
+      display: none;
+    }
+
+    .stats-popover.open { display: block; }
+
+    .stats-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .stats-divider {
+      border-top: 1px solid #1e1e1e;
+      margin: 0.5rem 0;
+    }
+
+    .stats-section-label {
+      font-size: 0.6rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.1rem;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+    }
+
+    .stats-row .sk { color: #777; }
+
+    .stats-row .sv {
+      color: #bbb;
+      font-variant-numeric: tabular-nums;
+    }
+
     /* layout */
     .layout {
       display: grid;
-      grid-template-columns: 300px 1fr;
+      grid-template-columns: 1fr 320px;
       gap: 3rem;
       align-items: start;
       max-width: 960px;
     }
 
-    @media (max-width: 680px) {
+    @media (max-width: 700px) {
       .layout { grid-template-columns: 1fr; }
+      .node-branches { display: none; }
     }
 
     /* chain column */
     .input-wrap {
       position: relative;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     input {
@@ -132,18 +177,22 @@ import Lab from "../../layouts/Lab.astro";
 
     #status {
       font-size: 0.7rem;
-      color: #555;
+      color: #777;
       flex: 1;
+      min-height: 1.2em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     #depth {
       font-size: 0.65rem;
-      color: #2a2a2a;
+      color: #444;
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
     }
 
-    #depth.nonzero { color: #444; }
+    #depth.nonzero { color: #777; }
 
     #chain {
       margin-top: 2rem;
@@ -152,21 +201,46 @@ import Lab from "../../layouts/Lab.astro";
       max-height: 70vh;
       overflow-y: auto;
       scrollbar-width: none;
-      padding-left: 0.5rem;
     }
 
     #chain::-webkit-scrollbar { display: none; }
 
     .node {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 0.75rem;
+      align-items: start;
+    }
+
+    .node-branches {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      align-items: flex-end;
+      padding-top: 0.15rem;
+      padding-right: 0.25rem;
+    }
+
+    .branch-item {
+      font-size: 0.6rem;
+      color: #3a3a3a;
+      text-align: right;
+      line-height: 1.5;
+    }
+
+    .branch-item a { color: inherit; text-decoration: none; }
+    .branch-item a:hover { color: #666; }
+
+    .node-info {
+      border-left: 1px solid #1e1e1e;
+      padding: 0 0 1.2rem 1rem;
+      position: relative;
       display: flex;
       flex-direction: column;
       gap: 0.3rem;
-      padding: 0 0 0 1rem;
-      border-left: 1px solid #1e1e1e;
-      position: relative;
     }
 
-    .node::before {
+    .node-info::before {
       content: "●";
       position: absolute;
       left: -0.42em;
@@ -176,36 +250,48 @@ import Lab from "../../layouts/Lab.astro";
       line-height: 1.6;
     }
 
-    .node.current::before { color: #e0c4eb; }
+    .node.current .node-info::before { color: #e0c4eb; }
 
     .node-handle {
       font-size: 0.82rem;
       color: #ccc;
     }
 
-    .node-handle a {
-      color: inherit;
-      text-decoration: none;
-    }
-
+    .node-handle a { color: inherit; text-decoration: none; }
     .node-handle a:hover { color: #eee; }
 
     .node-via {
       font-size: 0.68rem;
-      color: #444;
+      color: #666;
     }
 
     .node-via a { color: inherit; }
-    .node-via a:hover { color: #888; }
+    .node-via a:hover { color: #aaa; }
 
     .node-meta {
       font-size: 0.62rem;
-      color: #2a2a2a;
-      margin-bottom: 1.2rem;
+      color: #444;
     }
 
     .node.current .node-handle { color: #eee; }
-    .node.current .node-via { color: #555; }
+    .node.current .node-via { color: #888; }
+
+    @keyframes node-in {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .node { animation: node-in 0.2s ease-out; }
+
+    @keyframes post-in {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes post-out {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(8px); }
+    }
 
     /* post panel */
     #post-panel {
@@ -249,7 +335,7 @@ import Lab from "../../layouts/Lab.astro";
 
     .post-handle {
       font-size: 0.68rem;
-      color: #444;
+      color: #666;
     }
 
     .post-text {
@@ -315,13 +401,13 @@ import Lab from "../../layouts/Lab.astro";
 
     .post-quote-handle {
       font-size: 0.68rem;
-      color: #555;
+      color: #777;
       margin-bottom: 0.3rem;
     }
 
     .post-quote-text {
       font-size: 0.72rem;
-      color: #555;
+      color: #777;
       line-height: 1.6;
       white-space: pre-wrap;
       word-break: break-word;
@@ -329,11 +415,11 @@ import Lab from "../../layouts/Lab.astro";
 
     .post-link {
       font-size: 0.65rem;
-      color: #333;
+      color: #666;
       text-decoration: none;
     }
 
-    .post-link:hover { color: #888; }
+    .post-link:hover { color: #aaa; }
 
     .post-empty {
       font-size: 0.72rem;
@@ -350,8 +436,30 @@ import Lab from "../../layouts/Lab.astro";
         <div class="suggestions" id="suggestions" hidden></div>
         <span class="info-wrap">
           <button class="info-btn" id="info-btn">?</button>
+          <button class="info-btn" id="stats-btn">i</button>
           <div class="info-popover" id="info-popover">
             watch for likes, reposts, and posts from the current seed's follows → first event extracts the target post's author → resolves to a handle → that author becomes the new seed
+          </div>
+          <div class="info-popover stats-popover" id="stats-popover">
+            <div class="stats-section">
+              <div class="stats-section-label">session</div>
+              <div class="stats-row"><span class="sk">hops</span><span class="sv" id="sv-hops">—</span></div>
+              <div class="stats-row"><span class="sk">skips</span><span class="sv" id="sv-skipped">—</span></div>
+            </div>
+            <div class="stats-divider"></div>
+            <div class="stats-section">
+              <div class="stats-section-label">from follows</div>
+              <div class="stats-row"><span class="sk">likes</span><span class="sv" id="sv-p-like">—</span></div>
+              <div class="stats-row"><span class="sk">reposts</span><span class="sv" id="sv-p-repost">—</span></div>
+              <div class="stats-row"><span class="sk">posts</span><span class="sv" id="sv-p-post">—</span></div>
+              <div class="stats-row"><span class="sk">follows</span><span class="sv" id="sv-p-follow">—</span></div>
+            </div>
+            <div class="stats-divider"></div>
+            <div class="stats-section">
+              <div class="stats-section-label">chain</div>
+              <div class="stats-row"><span class="sk">triggered</span><span class="sv" id="sv-triggered">—</span></div>
+              <div class="stats-row"><span class="sk">branches</span><span class="sv" id="sv-branches">—</span></div>
+            </div>
           </div>
         </span>
       </div>
@@ -398,8 +506,35 @@ import Lab from "../../layouts/Lab.astro";
     // --- info popover ---
     const infoBtn = document.getElementById("info-btn");
     const infoPopover = document.getElementById("info-popover");
-    infoBtn.addEventListener("click", (e) => { e.stopPropagation(); infoPopover.classList.toggle("open"); });
-    document.addEventListener("click", () => infoPopover.classList.remove("open"));
+    infoBtn.addEventListener("click", (e) => { e.stopPropagation(); statsPopover.classList.remove("open"); infoPopover.classList.toggle("open"); });
+    document.addEventListener("click", () => { infoPopover.classList.remove("open"); });
+
+    // --- stats ---
+    const statsBtn = document.getElementById("stats-btn");
+    const statsPopover = document.getElementById("stats-popover");
+    statsBtn.addEventListener("click", (e) => { e.stopPropagation(); infoPopover.classList.remove("open"); statsPopover.classList.toggle("open"); updateStatsDisplay(); });
+
+    const stats = { hops: 0, processed: { like: 0, repost: 0, post: 0, follow: 0 }, triggered: 0, branches: 0, skipped: 0 };
+
+    function resetStats() {
+      stats.hops = 0; stats.processed.like = 0; stats.processed.repost = 0;
+      stats.processed.post = 0; stats.processed.follow = 0;
+      stats.triggered = 0; stats.branches = 0; stats.skipped = 0;
+      updateStatsDisplay();
+    }
+
+    function updateStatsDisplay() {
+      if (!statsPopover.classList.contains("open")) return;
+      const f = n => n === 0 ? "—" : n.toLocaleString();
+      document.getElementById("sv-hops").textContent      = f(stats.hops);
+      document.getElementById("sv-skipped").textContent   = f(stats.skipped);
+      document.getElementById("sv-p-like").textContent    = f(stats.processed.like);
+      document.getElementById("sv-p-repost").textContent  = f(stats.processed.repost);
+      document.getElementById("sv-p-post").textContent    = f(stats.processed.post);
+      document.getElementById("sv-p-follow").textContent  = f(stats.processed.follow);
+      document.getElementById("sv-triggered").textContent = f(stats.triggered);
+      document.getElementById("sv-branches").textContent  = f(stats.branches);
+    }
 
     // --- elements ---
     const input = document.getElementById("handle");
@@ -415,6 +550,9 @@ import Lab from "../../layouts/Lab.astro";
     let running = false;
     let hopping = false;
     let depth = 0;
+    let currentNode = null;
+    let shadowCount = 0;
+    const MAX_SHADOWS = 8;
 
     // --- typeahead ---
     input.addEventListener("input", () => {
@@ -465,7 +603,15 @@ import Lab from "../../layouts/Lab.astro";
       depth = 0;
       setDepth(0);
       running = true;
-      await hop(actor, null, null, null);
+      resetStats();
+
+      let seedPost = null;
+      try {
+        const feed = await xrpc("app.bsky.feed.getAuthorFeed", { actor, filter: "posts_no_replies", limit: 1 });
+        seedPost = feed.feed?.[0]?.post ?? null;
+      } catch {}
+
+      await hop(actor, null, null, seedPost);
     }
 
     function stop() {
@@ -473,11 +619,16 @@ import Lab from "../../layouts/Lab.astro";
       hopping = false;
       if (ws) { ws.close(); ws = null; }
       profiles = {};
+      currentNode = null;
+      shadowCount = 0;
     }
 
     async function hop(actor, viaText, likedUri, post) {
       if (!running) return;
       hopping = true;
+
+      shadowCount = 0;
+      if (viaText) stats.hops++;
 
       chainEl.querySelectorAll(".node.current").forEach(n => n.classList.remove("current"));
       setDepth(depth++);
@@ -485,26 +636,36 @@ import Lab from "../../layouts/Lab.astro";
       // chain node
       const node = document.createElement("div");
       node.className = "node current";
+      currentNode = node;
+
+      const branchesEl = document.createElement("div");
+      branchesEl.className = "node-branches";
+      node.appendChild(branchesEl);
+
+      const infoEl = document.createElement("div");
+      infoEl.className = "node-info";
 
       const handleEl = document.createElement("div");
       handleEl.className = "node-handle";
       handleEl.innerHTML = `<a href="https://bsky.app/profile/${encodeURIComponent(actor)}" target="_blank" rel="noopener">@${escapeHtml(actor)}</a>`;
-      node.appendChild(handleEl);
+      infoEl.appendChild(handleEl);
 
-      if (viaText && likedUri) {
+      if (viaText) {
         const viaEl = document.createElement("div");
         viaEl.className = "node-via";
-        viaEl.innerHTML = `${escapeHtml(viaText)} · <a href="${postUrlFromUri(likedUri)}" target="_blank" rel="noopener">↗</a>`;
-        node.appendChild(viaEl);
+        viaEl.innerHTML = likedUri
+          ? `${escapeHtml(viaText)} · <a href="${postUrlFromUri(likedUri)}" target="_blank" rel="noopener">↗</a>`
+          : escapeHtml(viaText);
+        infoEl.appendChild(viaEl);
       }
 
       const metaEl = document.createElement("div");
       metaEl.className = "node-meta";
       metaEl.textContent = new Date().toISOString().slice(11, 19) + " UTC";
-      node.appendChild(metaEl);
+      infoEl.appendChild(metaEl);
 
-      chainEl.appendChild(node);
-      node.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      node.appendChild(infoEl);
+      chainEl.prepend(node);
 
       // update post panel
       if (post) renderPost(post, likedUri);
@@ -530,7 +691,7 @@ import Lab from "../../layouts/Lab.astro";
 
       if (ws) { ws.close(); ws = null; }
       const url = new URL(JETSTREAM);
-      for (const col of ["app.bsky.feed.like", "app.bsky.feed.repost", "app.bsky.feed.post"]) {
+      for (const col of ["app.bsky.feed.like", "app.bsky.feed.repost", "app.bsky.feed.post", "app.bsky.graph.follow"]) {
         url.searchParams.append("wantedCollections", col);
       }
       ws = new WebSocket(url);
@@ -544,13 +705,41 @@ import Lab from "../../layouts/Lab.astro";
       ws.addEventListener("close", (e) => { if (running) setStatus(`disconnected (code ${e.code})`); });
 
       ws.addEventListener("message", async (e) => {
-        if (!running || hopping) return;
+        if (!running) return;
         try {
           const evt = JSON.parse(e.data);
           if (evt.kind !== "commit" || evt.commit?.operation !== "create") return;
           if (!profiles[evt.did]) return;
 
           const col = evt.commit.collection;
+          if (col === "app.bsky.feed.like") stats.processed.like++;
+          else if (col === "app.bsky.feed.repost") stats.processed.repost++;
+          else if (col === "app.bsky.feed.post") stats.processed.post++;
+          else if (col === "app.bsky.graph.follow") stats.processed.follow++;
+          updateStatsDisplay();
+
+          if (hopping) {
+            if (shadowCount < MAX_SHADOWS) {
+              const actorHandle = profiles[evt.did];
+              let verb, url;
+              if (col === "app.bsky.feed.like") {
+                const uri = evt.commit.record?.subject?.uri;
+                if (uri) { verb = "liked"; url = postUrlFromUri(uri); }
+              } else if (col === "app.bsky.feed.repost") {
+                const uri = evt.commit.record?.subject?.uri;
+                if (uri) { verb = "reposted"; url = postUrlFromUri(uri); }
+              } else if (col === "app.bsky.feed.post") {
+                verb = "posted";
+                url = postUrlFromUri(`at://${evt.did}/app.bsky.feed.post/${evt.commit.rkey}`);
+              } else if (col === "app.bsky.graph.follow") {
+                const did = evt.commit.record?.subject;
+                if (did) { verb = "followed"; url = `https://bsky.app/profile/${did}`; }
+              }
+              if (verb && url) addShadow(verb, actorHandle, url);
+            }
+            return;
+          }
+
           let targetDid, targetUri, verb;
 
           if (col === "app.bsky.feed.like" || col === "app.bsky.feed.repost") {
@@ -563,17 +752,22 @@ import Lab from "../../layouts/Lab.astro";
             targetDid = evt.did;
             targetUri = `at://${evt.did}/app.bsky.feed.post/${evt.commit.rkey}`;
             verb = "posted";
+          } else if (col === "app.bsky.graph.follow") {
+            targetDid = evt.commit.record?.subject;
+            if (!targetDid) return;
+            verb = "followed";
           } else {
             return;
           }
 
           hopping = true;
+          stats.triggered++;
           const actorHandle = profiles[evt.did];
           setStatus(`@${actorHandle} ${verb} — resolving…`);
 
           const [profileRes, postsRes] = await Promise.allSettled([
             xrpc("app.bsky.actor.getProfile", { actor: targetDid }),
-            xrpc("app.bsky.feed.getPosts", { uris: targetUri }),
+            targetUri ? xrpc("app.bsky.feed.getPosts", { uris: targetUri }) : Promise.resolve(null),
           ]);
 
           if (profileRes.status !== "fulfilled") { hopping = false; return; }
@@ -581,21 +775,46 @@ import Lab from "../../layouts/Lab.astro";
           const followsCount = profile.followsCount ?? 0;
 
           if (followsCount < MIN_FOLLOWS) {
+            stats.skipped++;
             setStatus(`skipping @${profile.handle} (${followsCount} follows) — waiting…`);
             hopping = false;
             return;
           }
 
-          const post = postsRes.status === "fulfilled" ? postsRes.value.posts?.[0] : null;
+          const post = (targetUri && postsRes.status === "fulfilled") ? postsRes.value.posts?.[0] : null;
           const viaText = col === "app.bsky.feed.post" ? "posted" : `${verb} by @${actorHandle}`;
           await hop(profile.handle, viaText, targetUri, post);
         } catch {}
       });
     }
 
+    function addShadow(verb, actorHandle, url) {
+      if (!currentNode) return;
+      const el = document.createElement("div");
+      el.className = "branch-item";
+      el.innerHTML = `${escapeHtml(verb)} @${escapeHtml(actorHandle)} · <a href="${url}" target="_blank" rel="noopener">↗</a>`;
+      currentNode.querySelector(".node-branches").appendChild(el);
+      shadowCount++;
+      stats.branches++;
+    }
+
     // --- post panel renderer ---
 
+    let renderTimer = null;
+
     function renderPost(post, uri) {
+      clearTimeout(renderTimer);
+      const hasContent = !postPanel.querySelector(".post-empty");
+      if (hasContent) {
+        postPanel.style.animation = "post-out 0.12s ease-in forwards";
+        renderTimer = setTimeout(() => buildPost(post, uri), 120);
+      } else {
+        buildPost(post, uri);
+      }
+    }
+
+    function buildPost(post, uri) {
+      postPanel.style.animation = "";
       postPanel.innerHTML = "";
 
       // author
@@ -638,6 +857,10 @@ import Lab from "../../layouts/Lab.astro";
         linkEl.textContent = "view on bsky.app ↗";
         postPanel.appendChild(linkEl);
       }
+
+      void postPanel.offsetWidth;
+      postPanel.style.animation = "post-in 0.2s ease-out";
+      postPanel.addEventListener("animationend", () => { postPanel.style.animation = ""; }, { once: true });
     }
 
     function renderEmbed(embed, container) {

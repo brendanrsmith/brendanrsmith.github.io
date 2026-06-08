@@ -316,7 +316,10 @@ import Lab from "../../layouts/Lab.astro";
         }
         cursor = res.cursor;
         const count = Object.keys(profiles).length;
-        if (cursor) setStatus(`fetching follows… ${count}${count >= MAX_FOLLOWS ? " (max)" : ""}`);
+        if (cursor) {
+          setStatus(`fetching follows… ${count}${count >= MAX_FOLLOWS ? " (max)" : ""}`);
+          await new Promise(r => setTimeout(r, 100));
+        }
       } while (cursor && Object.keys(profiles).length < MAX_FOLLOWS);
       return profiles;
     }
