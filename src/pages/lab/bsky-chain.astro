@@ -113,7 +113,6 @@ import Lab from "../../layouts/Lab.astro";
 
     @media (max-width: 700px) {
       .layout { grid-template-columns: 1fr; }
-      .node-branches { display: none; }
     }
 
     /* chain column */
@@ -201,31 +200,36 @@ import Lab from "../../layouts/Lab.astro";
       max-height: 70vh;
       overflow-y: auto;
       scrollbar-width: none;
+      padding-left: 0.6rem;
     }
 
     #chain::-webkit-scrollbar { display: none; }
 
     .node {
-      display: grid;
-      grid-template-columns: 110px 1fr;
-      gap: 0.75rem;
-      align-items: start;
+      display: block;
     }
 
     .node-branches {
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
-      align-items: flex-end;
-      padding-top: 0.15rem;
-      padding-right: 0.25rem;
+      gap: 0.1rem;
+      margin-top: 0.4rem;
+      margin-left: -1.2rem;
     }
 
     .branch-item {
       font-size: 0.6rem;
       color: #3a3a3a;
-      text-align: right;
       line-height: 1.5;
+    }
+
+    .branch-item::before {
+      content: "├─ ";
+      color: #1e1e1e;
+    }
+
+    .branch-item:last-child::before {
+      content: "╰─ ";
     }
 
     .branch-item a { color: inherit; text-decoration: none; }
@@ -427,7 +431,7 @@ import Lab from "../../layouts/Lab.astro";
     }
   </style>
 
-  <h1><a href="/lab">lab</a> &gt; chain</h1>
+  <h1><a href="/lab">lab</a> &gt; chain surfer</h1>
 
   <div class="layout">
     <div class="chain-col">
@@ -638,10 +642,6 @@ import Lab from "../../layouts/Lab.astro";
       node.className = "node current";
       currentNode = node;
 
-      const branchesEl = document.createElement("div");
-      branchesEl.className = "node-branches";
-      node.appendChild(branchesEl);
-
       const infoEl = document.createElement("div");
       infoEl.className = "node-info";
 
@@ -663,6 +663,10 @@ import Lab from "../../layouts/Lab.astro";
       metaEl.className = "node-meta";
       metaEl.textContent = new Date().toISOString().slice(11, 19) + " UTC";
       infoEl.appendChild(metaEl);
+
+      const branchesEl = document.createElement("div");
+      branchesEl.className = "node-branches";
+      infoEl.appendChild(branchesEl);
 
       node.appendChild(infoEl);
       chainEl.prepend(node);
