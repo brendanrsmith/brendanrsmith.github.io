@@ -162,9 +162,11 @@ function Embed({ embed }: { embed: Record<string, unknown> }) {
 function PostPanel({
   post,
   uri,
+  isRepost,
 }: {
   post: Record<string, unknown> | null;
   uri: string | null;
+  isRepost?: boolean;
 }) {
   if (!post) return <p className="post-empty">—</p>;
   const author = post.author as Record<string, string> | undefined;
@@ -174,6 +176,7 @@ function PostPanel({
   const embed = post.embed as Record<string, unknown> | undefined;
   return (
     <>
+      {isRepost && <div className="post-repost-label">↻ repost</div>}
       <div className="post-author">
         {author?.avatar ? (
           <img className="post-avatar" src={author.avatar} alt="" />
@@ -264,7 +267,7 @@ function ChainNodeEl({
 
 // --- main component ---
 
-export default function BskyChain() {
+export default function BskySurf() {
   const [inputVal, setInputVal] = useState("");
   const [placeholder, setPlaceholder] = useState("seed handle");
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -278,6 +281,7 @@ export default function BskyChain() {
   const [currentPost, setCurrentPost] = useState<{
     post: Record<string, unknown>;
     uri: string | null;
+    isRepost: boolean;
   } | null>(null);
   const [postRevision, setPostRevision] = useState(0);
   const [postExiting, setPostExiting] = useState(false);
@@ -307,6 +311,7 @@ export default function BskyChain() {
   const pendingPost = useRef<{
     post: Record<string, unknown>;
     uri: string | null;
+    isRepost: boolean;
   } | null>(null);
   const hasPost = useRef(false);
 
@@ -363,12 +368,13 @@ export default function BskyChain() {
   function schedulePostUpdate(
     post: Record<string, unknown>,
     uri: string | null,
+    isRepost: boolean,
   ) {
-    pendingPost.current = { post, uri };
+    pendingPost.current = { post, uri, isRepost };
     if (postExitTimer.current) clearTimeout(postExitTimer.current);
     if (!hasPost.current) {
       hasPost.current = true;
-      setCurrentPost({ post, uri });
+      setCurrentPost({ post, uri, isRepost });
       setPostRevision((r) => r + 1);
       return;
     }
@@ -526,7 +532,7 @@ export default function BskyChain() {
     };
 
     setChain((prev) => [newNode, ...prev]);
-    if (post) schedulePostUpdate(post, likedUri);
+    if (post) schedulePostUpdate(post, likedUri, viaText?.startsWith("reposted") ?? false);
 
     if (nodeTimer.current) clearInterval(nodeTimer.current);
     nodeStart.current = Date.now();
@@ -540,18 +546,18 @@ export default function BskyChain() {
             return prev;
           return [{ ...prev[0], stuck: true }, ...prev.slice(1)];
         });
-        setStatus("quiet here", "hop-random");
+        setStatus("static", "hop-random");
       }
     }, 1000);
 
-    setStatus(`fetching follows for @${actor}…`);
+    setStatus(`tuning to @${actor}…`);
     try {
       profiles.current = await fetchFollows(actor);
       if (seedFollowDids.current.size === 0) {
         seedFollowDids.current = new Set(Object.keys(profiles.current));
       }
     } catch {
-      setStatus(`could not fetch follows for @${actor}`);
+      setStatus(`couldn't tune to @${actor}`);
       runningRef.current = false;
       setRunning(false);
       return;
@@ -559,7 +565,7 @@ export default function BskyChain() {
 
     const count = Object.keys(profiles.current).length;
     if (count === 0) {
-      setStatus(`@${actor} has no follows — chain ends`);
+      setStatus(`@${actor} follows no one — signal lost`);
       runningRef.current = false;
       setRunning(false);
       return;
@@ -595,7 +601,7 @@ export default function BskyChain() {
         return;
       }
       hopping.current = false;
-      setStatus(`watching @${actor}'s ${count} follows`);
+      setStatus(`watching · @${actor} · ${count} following`);
     });
 
     socket.addEventListener("close", (e) => {
@@ -755,21 +761,21 @@ export default function BskyChain() {
     const dids = Object.keys(profiles.current);
     if (!dids.length || hopping.current) return;
     hopping.current = true;
-    setStatus("picking random follow…");
+    setStatus("flipping…");
     try {
       const did = dids[Math.floor(Math.random() * dids.length)];
       const profile = await xrpc("app.bsky.actor.getProfile", { actor: did });
       const inSeedGraph = seedFollowDids.current.has(did);
       await hopRef.current(
         profile.handle,
-        "random hop",
+        "flipped",
         null,
         null,
         inSeedGraph,
       );
     } catch {
       hopping.current = false;
-      setStatus("random hop failed");
+      setStatus("flip failed");
     }
   }
 
@@ -792,7 +798,7 @@ export default function BskyChain() {
   return (
     <>
       <h1>
-        <a href="/lab">lab</a> &gt; chain surfer
+        <a href="/lab">lab</a> &gt; channel surf
       </h1>
       <div className="layout">
         <div className="chain-col">
@@ -853,14 +859,7 @@ export default function BskyChain() {
               </button>
               {infoOpen && (
                 <div className="info-popover open">
-                  <p>take a walk on the wild side</p>
-                  <p>
-                    watch for likes, reposts, and posts from the current seed's
-                    follows → first event extracts the target post's author →
-                    resolves to a handle → that author becomes the new seed
-                  </p>
-                  <p>paths not taken are shown as branches on the chain</p>
-                  <p>in which local minima does your fate reside?</p>
+                  tune into someone's follows and watch the firehose — the first like, repost, post, or follow that comes through flips you to that person's channel — and so on
                 </div>
               )}
               {statsOpen && (
@@ -868,7 +867,7 @@ export default function BskyChain() {
                   <div className="stats-section">
                     <div className="stats-section-label">session</div>
                     <div className="stats-row">
-                      <span className="sk">hops</span>
+                      <span className="sk">flips</span>
                       <span className="sv">{f(hops)}</span>
                     </div>
                     <div className="stats-row">
@@ -912,7 +911,7 @@ export default function BskyChain() {
                       <span className="sv">{f(branches)}</span>
                     </div>
                     <div className="stats-row">
-                      <span className="sk">hops from seed</span>
+                      <span className="sk">from home</span>
                       <span className="sv">
                         {fromSeed === 0 ? "—" : fromSeed}
                       </span>
@@ -947,7 +946,7 @@ export default function BskyChain() {
               {statusAction === "hop-random" && (
                 <>
                   {" "}
-                  — <button onClick={hopRandom}>hop random</button>
+                  — <button onClick={hopRandom}>flip</button>
                 </>
               )}
             </div>
@@ -961,7 +960,7 @@ export default function BskyChain() {
               )}
               {depth > 1 && (
                 <div id="depth" className="nonzero">
-                  {depth} hops
+                  {depth} flips
                 </div>
               )}
               {skips > 0 && <div id="skips">{skips} skipped</div>}
@@ -984,6 +983,7 @@ export default function BskyChain() {
               <PostPanel
                 post={currentPost?.post ?? null}
                 uri={currentPost?.uri ?? null}
+                isRepost={currentPost?.isRepost ?? false}
               />
             </div>
           </div>

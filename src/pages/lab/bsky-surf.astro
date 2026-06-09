@@ -1,9 +1,9 @@
 ---
 import Lab from "../../layouts/Lab.astro";
-import BskyChain from "../../components/lab/BskyChain";
+import BskySurf from "../../components/lab/BskySurf";
 ---
 
-<Lab title="chain">
+<Lab title="surf">
   <style is:global>
     body {
       background: #0a0a0a;
@@ -79,6 +79,7 @@ import BskyChain from "../../components/lab/BskyChain";
       line-height: 1.6;
       padding: 0.75rem 1rem;
       width: 260px;
+      box-sizing: border-box;
       z-index: 20;
       display: none;
     }
@@ -127,8 +128,28 @@ import BskyChain from "../../components/lab/BskyChain";
       max-width: 960px;
     }
 
+    /* prevent either column from blowing out the grid */
+    .post-col, .chain-col { min-width: 0; }
+
     @media (max-width: 700px) {
       .layout { grid-template-columns: 1fr; }
+
+      .post-col { order: -1; }
+
+      .info-popover {
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: auto;
+        max-height: 55vh;
+        overflow-y: auto;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        border-top: 1px solid #2a2a2a;
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+      }
     }
 
     /* chain column */
@@ -145,7 +166,7 @@ import BskyChain from "../../components/lab/BskyChain";
       border-bottom: 1px solid #333;
       color: #eee;
       font-family: monospace;
-      font-size: 0.85rem;
+      font-size: 16px;
       padding: 0.25rem 0;
       width: 240px;
       outline: none;
@@ -292,6 +313,9 @@ import BskyChain from "../../components/lab/BskyChain";
     .node-handle {
       font-size: 0.82rem;
       color: #ccc;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .node-handle a { color: inherit; text-decoration: none; }
@@ -300,6 +324,9 @@ import BskyChain from "../../components/lab/BskyChain";
     .node-via {
       font-size: 0.68rem;
       color: #666;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .node-via a { color: inherit; }
@@ -414,12 +441,17 @@ import BskyChain from "../../components/lab/BskyChain";
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
+      overflow: hidden;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .post-external-thumb {
+      display: block;
       width: 100%;
+      aspect-ratio: 1.91 / 1;
       max-height: 140px;
-      object-fit: contain;
+      object-fit: cover;
       background: #111;
       margin-bottom: 0.4rem;
     }
@@ -469,7 +501,14 @@ import BskyChain from "../../components/lab/BskyChain";
       font-size: 0.72rem;
       color: #2a2a2a;
     }
+
+    .post-repost-label {
+      font-size: 0.6rem;
+      color: #555;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.6rem;
+    }
   </style>
 
-  <BskyChain client:only="react" />
+  <BskySurf client:only="react" />
 </Lab>
