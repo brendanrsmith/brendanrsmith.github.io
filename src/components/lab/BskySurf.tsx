@@ -31,7 +31,7 @@ interface Stats {
   triggered: number;
 }
 
-type StatusAction = null | "reconnect" | "hop-random";
+type StatusAction = null | "reconnect" | "hop-back";
 
 const EMPTY_STATS: Stats = {
   seen: 0,
@@ -275,7 +275,6 @@ export default function BskySurf() {
   const [running, setRunning] = useState(false);
   const [statusMsg, setStatusMsg] = useState("");
   const [statusAction, setStatusAction] = useState<StatusAction>(null);
-  const [depth, setDepth] = useState(0);
   const [elapsed, setElapsed] = useState<number | null>(null);
   const [chain, setChain] = useState<NodeData[]>([]);
   const [currentPost, setCurrentPost] = useState<{
@@ -299,7 +298,6 @@ export default function BskySurf() {
   const currentActor = useRef<string | null>(null);
   const nodeTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const nodeStart = useRef<number | null>(null);
-  const depthRef = useRef(0);
   const nodeIdRef = useRef(0);
   const statsRef = useRef<Stats>({
     ...EMPTY_STATS,
@@ -386,6 +384,22 @@ export default function BskySurf() {
     }, 220);
   }
 
+  function startNodeTimer(id: number) {
+    if (nodeTimer.current) clearInterval(nodeTimer.current);
+    nodeStart.current = Date.now();
+    nodeTimer.current = setInterval(() => {
+      const el = Date.now() - (nodeStart.current ?? Date.now());
+      setElapsed(el);
+      if (el >= STUCK_MS) {
+        setChain((prev) => {
+          if (!prev.length || prev[0].id !== id || prev[0].stuck) return prev;
+          return [{ ...prev[0], stuck: true }, ...prev.slice(1)];
+        });
+        setStatus("quiet here...", "hop-back");
+      }
+    }, 1000);
+  }
+
   // --- typeahead ---
 
   async function fetchSuggestions(q: string) {
@@ -451,7 +465,6 @@ export default function BskySurf() {
       clearInterval(nodeTimer.current);
       nodeTimer.current = null;
     }
-    depthRef.current = 0;
     if (postExitTimer.current) {
       clearTimeout(postExitTimer.current);
       postExitTimer.current = null;
@@ -472,7 +485,6 @@ export default function BskySurf() {
     setPlaceholder(actor);
     setChain([]);
     setCurrentPost(null);
-    setDepth(0);
     setElapsed(null);
     statsRef.current = {
       ...EMPTY_STATS,
@@ -499,7 +511,6 @@ export default function BskySurf() {
     stop();
     setChain([]);
     setCurrentPost(null);
-    setDepth(0);
     setStatus("");
   }
 
@@ -515,9 +526,6 @@ export default function BskySurf() {
     if (!runningRef.current) return;
     hopping.current = true;
 
-    depthRef.current++;
-    setDepth(depthRef.current);
-
     const id = ++nodeIdRef.current;
     const timestamp = new Date().toISOString().slice(11, 19) + " UTC";
     const newNode: NodeData = {
@@ -532,23 +540,13 @@ export default function BskySurf() {
     };
 
     setChain((prev) => [newNode, ...prev]);
-    if (post) schedulePostUpdate(post, likedUri, viaText?.startsWith("reposted") ?? false);
-
-    if (nodeTimer.current) clearInterval(nodeTimer.current);
-    nodeStart.current = Date.now();
-    const thisId = id;
-    nodeTimer.current = setInterval(() => {
-      const el = Date.now() - (nodeStart.current ?? Date.now());
-      setElapsed(el);
-      if (el >= STUCK_MS) {
-        setChain((prev) => {
-          if (!prev.length || prev[0].id !== thisId || prev[0].stuck)
-            return prev;
-          return [{ ...prev[0], stuck: true }, ...prev.slice(1)];
-        });
-        setStatus("static", "hop-random");
-      }
-    }, 1000);
+    if (post)
+      schedulePostUpdate(
+        post,
+        likedUri,
+        viaText?.startsWith("reposted") ?? false,
+      );
+    startNodeTimer(id);
 
     setStatus(`tuning to @${actor}…`);
     try {
@@ -740,7 +738,7 @@ export default function BskySurf() {
     });
   }
 
-  // --- reconnect / hop random ---
+  // --- reconnect / hop back ---
 
   async function reconnect() {
     if (!currentActor.current || !runningRef.current) return;
@@ -757,25 +755,33 @@ export default function BskySurf() {
     );
   }
 
-  async function hopRandom() {
-    const dids = Object.keys(profiles.current);
-    if (!dids.length || hopping.current) return;
+  async function hopBack() {
+    if (hopping.current) return;
+    if (chain.length < 2) {
+      reconnect();
+      return;
+    }
     hopping.current = true;
-    setStatus("flipping…");
+    const prevNode = chain[1];
+    const prevActor = prevNode.actor;
+
+    // Drop the stuck node; restore the previous one as current (un-stuck)
+    setChain((prev) => {
+      if (prev.length < 2) return prev;
+      return [{ ...prev[1], stuck: false }, ...prev.slice(2)];
+    });
+
+    setElapsed(0);
+    setStatus(`returning to @${prevActor}…`);
     try {
-      const did = dids[Math.floor(Math.random() * dids.length)];
-      const profile = await xrpc("app.bsky.actor.getProfile", { actor: did });
-      const inSeedGraph = seedFollowDids.current.has(did);
-      await hopRef.current(
-        profile.handle,
-        "flipped",
-        null,
-        null,
-        inSeedGraph,
-      );
+      profiles.current = await fetchFollows(prevActor);
+      if (!runningRef.current) return;
+      const count = Object.keys(profiles.current).length;
+      startNodeTimer(prevNode.id);
+      connectJetstream(prevActor, count);
     } catch {
       hopping.current = false;
-      setStatus("flip failed");
+      setStatus("couldn't go back");
     }
   }
 
@@ -859,7 +865,15 @@ export default function BskySurf() {
               </button>
               {infoOpen && (
                 <div className="info-popover open">
-                  tune into someone's follows and watch the firehose — the first like, repost, post, or follow that comes through flips you to that person's channel — and so on
+                  <p>
+                    tune into an account and watch the firehose from their pov —
+                    the first like, repost, post, or follow that comes through
+                    hops you to that account's channel — and so on
+                  </p>
+                  <p>branches not taken flow past in the thread</p>
+                  <p>
+                    will you surf the net(work) or get stuck in a backwater?
+                  </p>
                 </div>
               )}
               {statsOpen && (
@@ -867,7 +881,7 @@ export default function BskySurf() {
                   <div className="stats-section">
                     <div className="stats-section-label">session</div>
                     <div className="stats-row">
-                      <span className="sk">flips</span>
+                      <span className="sk">hops</span>
                       <span className="sv">{f(hops)}</span>
                     </div>
                     <div className="stats-row">
@@ -911,7 +925,7 @@ export default function BskySurf() {
                       <span className="sv">{f(branches)}</span>
                     </div>
                     <div className="stats-row">
-                      <span className="sk">from home</span>
+                      <span className="sk">hops from seed</span>
                       <span className="sv">
                         {fromSeed === 0 ? "—" : fromSeed}
                       </span>
@@ -943,26 +957,22 @@ export default function BskySurf() {
                   — <button onClick={reconnect}>reconnect</button>
                 </>
               )}
-              {statusAction === "hop-random" && (
+              {statusAction === "hop-back" && (
                 <>
                   {" "}
-                  — <button onClick={hopRandom}>flip</button>
+                  — <button onClick={hopBack}>go back</button>
                 </>
               )}
             </div>
           </div>
-          {(elapsed !== null || depth > 1 || skips > 0) && (
+          {(elapsed !== null || hops > 0 || skips > 0) && (
             <div className="meta-row">
               {elapsed !== null && (
                 <div id="timer" className={elapsed >= STUCK_MS ? "stuck" : ""}>
                   {fmtElapsed(elapsed)}
                 </div>
               )}
-              {depth > 1 && (
-                <div id="depth" className="nonzero">
-                  {depth} flips
-                </div>
-              )}
+              {hops > 0 && <div id="depth">{hops} hops</div>}
               {skips > 0 && <div id="skips">{skips} skipped</div>}
             </div>
           )}
